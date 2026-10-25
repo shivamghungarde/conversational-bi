@@ -1,13 +1,32 @@
 # Conversational BI over a semantic layer
 
-Ask business questions in plain English and get an instant answer, a chart and the result set,
-with no SQL. Built for business leaders who want to slice metrics themselves without waiting on an analyst.
+A proof of concept for senior stakeholders. Ask about utilization, revenue and delivery in plain English, with
+no SQL. You get an instant answer, a chart and the result set. Ask *why* something changed and it explains what
+happened, how it happened and why.
 
 ```
-"Revenue by region vs last year"
-→ East leads with $858.1K revenue (29% of the total) year to date. Next is North at $776.0K,
-  and South is at the bottom with $597.3K. Biggest gain: South (up 15.5%). Overall revenue is up 13.6%.
+"Why did utilization drop last month?"
+
+WHAT HAPPENED   Utilization fell 4.6 pts, from 77.7% in August 2026 to 73.1% in September 2026.
+                Billable hours were up 13.5% while available hours were up 20.6%.
+HOW             Before this, utilization had been steady at 75.7%–77.7% for 5 months, so this is a break
+                from the pattern, not a long slide.
+WHY             The change is concentrated by region. India (-3.2 pts, 70% of the change): utilization went
+                from 79.9% to 70.7%… By practice, the biggest factor is Data & AI (-3.4 pts).
 ```
+
+## Principles
+
+- **On-premises only.** Questions and data never leave this machine. The built-in interpreter is a rules
+  engine. An optional LLM must be self-hosted, and the app refuses any endpoint that isn't on a private network.
+- **Asks instead of guessing.** Vague measures ("performance", "hours"), values that match more than one thing,
+  vague periods ("recently"), and "why" questions with no period all get a clarifying question with one-click
+  answers.
+- **Real-time.** Every question queries the source live, with no result cache. CSV and Excel files reload as
+  soon as they change. Each answer shows when it was computed, and the header shows when the data last changed.
+  Answers can auto-refresh.
+- **Governed.** Metrics are defined once in a semantic model. Nothing writes free SQL: questions become a
+  structured query that is validated and compiled with bound parameters.
 
 ## Run it
 
@@ -17,89 +36,99 @@ Needs Python 3.9+ and nothing else: no packages, no database server, no API key.
 ./run.sh
 ```
 
-Open http://127.0.0.1:8765. On first run it builds a demo retail dataset (`data/demo.db`, about 25K orders).
-
-Run the tests:
-
-```bash
-python3 -m unittest discover -s tests
-```
-
-### Optional: Claude for unusual phrasings
-
-The built-in rules engine answers common questions in 1–20 ms. To route low-confidence questions to Claude:
+Open http://127.0.0.1:8765. The first run builds a demo professional-services dataset: 132 consultants, 5
+practices, 12 clients, and daily timesheets since January 2025. Late timesheets for the last few working days
+keep arriving every few seconds, so the numbers move as you watch. Two events are built in so "why" questions
+have real answers: a large Data & AI engagement ended on 31 August 2026, and 18 junior hires joined in India
+on 1 September.
 
 ```bash
-pip install anthropic
-export ANTHROPIC_API_KEY=sk-ant-...
-./run.sh
+python3 -m unittest discover -s tests     # 32 tests
 ```
+
+## Bring your own data
+
+| Source | How |
+|---|---|
+| **CSV / Excel** | Click **+ Add file** in the header, or start with `BI_SOURCE=/path/report.xlsx ./run.sh`. Types (dates in most formats, `$1,234` amounts, `45%`) and a semantic model are inferred automatically. If the file has billable and available/capacity hours, **utilization** is created as a governed ratio. The draft model is saved as `<file>.semantic.json` for you to refine. |
+| **SQLite** | `BI_SOURCE=/path/warehouse.db BI_MODEL_FILE=semantic/your_model.json ./run.sh` |
+| **PostgreSQL** | `pip install "psycopg[binary]"`, then `BI_SOURCE=postgresql://user@host/db BI_MODEL_FILE=… ./run.sh`. Read-only session. **Not yet tested against a live server.** |
+
+Uploaded files are stored in `data/uploads/` and come back after a restart. Re-uploading a file with the same name
+replaces it.
+
+### Configuration
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `BI_LLM` | `on` | `off` disables Claude even when it's configured |
-| `BI_MODEL` | `claude-opus-5-5` | Model used to interpret questions |
+| `BI_SOURCE` / `BI_MODEL_FILE` | | Your own data source and its semantic model (see above) |
+| `BI_DEMO` | `1` | `0` hides the demo dataset |
+| `BI_LIVE` / `BI_LIVE_INTERVAL` | `1` / `8` | Demo live feed of late timesheets, and seconds between batches |
+| `BI_LOCAL_LLM_URL` / `BI_LOCAL_LLM_MODEL` | off | Optional **self-hosted** model (Ollama, vLLM, LM Studio) for unusual phrasings. Private-network addresses only. **Untested**: no local model was available while building. |
 | `PORT` / `BI_HOST` | `8765` / `127.0.0.1` | Where the server listens |
-| `BI_DB` | `data/demo.db` | SQLite database path |
-| `BI_MODEL_FILE` | `semantic/retail_sales.json` | Semantic model to load |
+| `BI_DATA_DIR` | `data/` | Demo database, uploads, cache and the question log |
 
 ## What a user can do
 
-- **Ask in plain English:** "Top 5 products by gross profit", "monthly revenue trend", "gross margin by category in Q2 2025".
-- **Follow up in conversation:** "now by channel", "what about South?", "only Online", "compare with last year".
-- **Make custom breakdowns instantly:** each answer has controls to change the breakdown, trend grain, metrics and
-  comparison. Changes run directly against the semantic layer, with no re-interpretation and no waiting.
-- **Drill down:** click any value in the table (for example *East*) to filter to it and break it down by the next dimension.
-- **Trust the answer:** chips show exactly what was understood (and can be removed); "How this was calculated" shows the SQL.
-- **Start from examples:** sample questions come from the semantic model through `/api/samples`. They rotate as the
-  input placeholder (press Tab to accept one) and appear as one-click chips.
-- **Export:** download any result set as CSV.
+- **Ask:** "Utilization by practice last month", "Top 5 clients by revenue year to date", "Monthly utilization
+  trend", "Average bill rate by grade", "How many consultants in India".
+- **Ask why:** "Why did utilization drop last month?", "What drove the change in revenue this quarter?". The
+  answer is split into what happened, how it happened (trend with the compared periods shaded) and why (a driver
+  chart you can switch between practice, region, grade and so on).
+- **Follow up:** "now by region", "what about India?", "why?".
+- **Answer clarifying questions** with one click.
+- **Make custom breakdowns instantly** with the breakdown, trend, metric and compare controls. Click any table
+  value to drill into it.
+- **Trust it:** chips show what was understood, "How this was calculated" shows the SQL, and each answer shows its
+  "as of" time.
+- **Start from examples:** sample questions come from the dataset's semantic model through `/api/samples`, rotate
+  in the input placeholder (Tab accepts one) and appear as chips.
 
-## How it works
+## How "why" works
 
-```
-question ─► Rule parser ──(confident)──────────────┐
-              │ (low confidence, if configured)     ▼
-              └──► Claude (JSON schema locked ─► SemanticQuery ─► validate ─► compile SQL ─► SQLite
-                   to model names)                                (governed)   (parameterised)
-                                                                                     │
-          answer text (templates) ◄── result set + totals + comparison period ◄──────┘
-```
+The change between two periods is split across the groups of every relevant dimension, and the dimension
+where the change is most concentrated leads the explanation.
 
-- **The semantic layer** (`semantic/retail_sales.json`) defines metrics (with their SQL), dimensions, joins,
-  synonyms and sample questions. It is the only place business logic lives.
-- **Nothing writes free SQL.** The rule parser and Claude both produce a structured `SemanticQuery`
-  (metrics, dimensions, filters, time range, grain, comparison, top-N). The compiler takes identifiers only from
-  the model file and binds every user value as a parameter.
-- **Answers are templated from the result set**, so the numbers in the sentence always match the table.
-- **Every question is logged** to `data/query_log.jsonl` with the interpretation, confidence and latency.
-  Low-confidence and failed questions show you which synonyms or metrics to add next.
+- **Additive metrics** (revenue, hours): each group's contribution is its own change. The contributions add up
+  exactly to the total change.
+- **Ratios** (utilization = billable ÷ available, margin, bill rate): each group's contribution is split into
+  - a **rate effect**: the group's own utilization moved, and
+  - a **mix effect**: capacity shifted toward a group that runs above or below average. New joiners on the bench
+    are the classic case.
+
+  These also add up exactly to the total change, in percentage points.
+
+A metric can list the dimensions worth explaining it by (`explain_by` in the model). Utilization is explained by
+practice, region, grade and consultant, because "by client" only restates that the bench isn't billed.
 
 ## Layout
 
 ```
-bi/semantic.py     semantic model, SemanticQuery, validator, SQL compiler, comparison logic
-bi/parser.py       rule-based plain English → SemanticQuery (time phrases, top-N, filters, follow-ups)
-bi/llm.py          optional Claude interpreter (structured output constrained to the model)
-bi/narrate.py      plain-English answers, interpretation chips, suggested next breakdowns
-bi/engine.py       orchestration, confidence routing, query log
-bi/server.py       stdlib HTTP API + static files
-bi/data.py         demo dataset generator (replace with a real warehouse connector)
-semantic/          semantic model definitions
-web/               UI (vanilla HTML/CSS/JS, no build step)
-tests/             unittest suite
-docs/              best practices and roadmap
+bi/semantic.py      semantic model, SemanticQuery, validator, SQL compiler (SQLite + Postgres dialects)
+bi/parser.py        rules interpreter: periods, top-N, filters, follow-ups, why-intent, ambiguity detection
+bi/engine.py        orchestration: clarify / query / explain, freshness, question log
+bi/explain.py       driver analysis (additive and rate/mix decomposition) and the what/how/why narrative
+bi/narrate.py       plain-English answers, interpretation chips, suggestions
+bi/sources.py       SQLite, PostgreSQL, CSV/Excel sources (file reload on change)
+bi/xlsx.py          stdlib .xlsx reader
+bi/autosemantic.py  draft a semantic model from a file's columns
+bi/llm.py           optional on-prem LLM adapter with a private-network guard
+bi/data.py          demo dataset and live timesheet feed
+bi/server.py        stdlib HTTP API, datasets and uploads
+semantic/           semantic models
+web/                UI (vanilla HTML/CSS/JS, no build step)
 ```
 
 ## API
 
 | Method | Path | Body | Returns |
 |---|---|---|---|
-| GET | `/api/samples` | | `{samples: [...]}` sample questions (shuffled) |
-| GET | `/api/model` | | metrics, dimensions and their values |
-| POST | `/api/ask` | `{question, context?}` | answer, interpretation, query, columns, rows, totals, sql |
-| POST | `/api/query` | `{query}` | same, for a structured query (custom breakdowns) |
+| GET | `/api/datasets` | | available datasets |
+| GET | `/api/samples?dataset=` | | sample questions (shuffled) |
+| GET | `/api/model?dataset=` | | measures, dimensions and values, plus freshness |
+| GET | `/api/freshness?dataset=` | | when the data last changed, coverage |
+| POST | `/api/ask` | `{dataset, question, context?, context_dataset?, clarifications?}` | `type` of `result`, `explain` or `clarify`, plus the `dataset` that answered. `dataset: "auto"` routes the question to the source whose measures match it, and asks which source to use when several fit. |
+| POST | `/api/query` | `{dataset, query}` | runs a structured query (custom breakdowns) |
+| POST | `/api/upload` | raw file, `X-Filename` header | adds a CSV/Excel dataset |
 
-`context` is the `query` from the previous answer, which enables follow-up questions.
-
-See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for how to grow this into a production standalone product.
+See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for taking this from POC to production.

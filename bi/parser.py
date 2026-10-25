@@ -1,8 +1,9 @@
-"""Rule-based interpreter: plain English -> SemanticQuery, in well under a millisecond.
+"""Rule-based interpreter: plain English -> SemanticQuery, in about a millisecond, fully on-premises.
 
 It handles the bulk of everyday business questions (metric by dimension, time
-ranges, top-N, trends, comparisons, filters, follow-ups). Anything it is not
-confident about is handed to the LLM interpreter when one is configured.
+ranges, top-N, trends, comparisons, filters, follow-ups, "why" questions).
+When a question is ambiguous it does not guess: it reports the ambiguity so
+the engine can ask the user a clarifying question.
 """
 from __future__ import annotations
 
@@ -21,17 +22,34 @@ NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, 
 FOLLOW_UP_CUES = ("and ", "now ", "what about", "how about", "only ", "just ", "same ", "instead",
                   "also ", "then ", "break", "split", "drill", "filter", "exclude", "excluding",
                   "except", "without", "but ", "by ", "show it", "make it", "vs", "versus",
-                  "compare", "compared")
+                  "compare", "compared", "why")
 NEGATIONS = ("excluding", "except", "without", "not", "exclude", "other than", "minus", "ex")
+EXPLAIN_PATTERN = re.compile(
+    r"\b(why|what drove|what drives|what caused|what causes|what is driving|what's driving|drivers? of|"
+    r"driving|reasons? for|reason|root cause|explain|how come|what happened|what changed|"
+    r"how did (?:it|this|that|we)? ?(?:happen|change)|contribut\w*|attribut\w*)\b")
+DOWN_WORDS = re.compile(r"\b(drop|dropped|fall|fell|decline|declined|decrease|decreased|down|dip|dipped|lower|"
+                        r"worse|slump|slumped|shrink|shrank|lost|reduce|reduced)\b")
+UP_WORDS = re.compile(r"\b(rise|rose|increase|increased|grow|grew|up|jump|jumped|higher|better|improve|"
+                      r"improved|gain|gained|spike|spiked)\b")
+VAGUE_TIME = re.compile(r"\b(recently|recent|lately|of late|these days|nowadays)\b")
 
 
 @dataclass
 class Interpretation:
     query: SemanticQuery
     confidence: float
-    notes: list = field(default_factory=list)  # human-readable reasons, shown in the UI
+    notes: list = field(default_factory=list)        # human-readable reasons, shown in the UI
     follow_up: bool = False
     matched: dict = field(default_factory=dict)
+    ambiguities: list = field(default_factory=list)  # each: {"kind", "term"?, "options"}
+    claimed_direction: str | None = None              # "up"/"down" if the question asserts one
+
+
+def normalize(text: str) -> str:
+    text = str(text).lower().replace("&", " and ").replace("'s", "")
+    text = re.sub(r"[^\w%\-\s']", " ", text)
+    return " " + re.sub(r"\s+", " ", text).strip() + " "
 
 
 def _month_start(d: dt.date) -> dt.date:
@@ -169,8 +187,7 @@ COMPARE_PATTERNS = [
     (r"\b(?:yoy|year over year|year-over-year|same period last year)\b", "previous_year"),
     (r"\b(?:vs\.?|versus|compared? (?:to|with)|against)\s+(?:the\s+)?(?:previous|prior|last)\s+(?:period|month|quarter|week)\b",
      "previous_period"),
-    (r"\b(?:growth|grow|grew|change|changed|compare|compared|comparison|increase|decrease|up or down|delta)\b",
-     "previous_period"),
+    (r"\b(?:change|changed|compare|compared|comparison|up or down|delta)\b", "previous_period"),
 ]
 
 
@@ -182,34 +199,54 @@ class RuleParser:
     def __init__(self, model: SemanticModel, dimension_values: dict):
         """`dimension_values` maps dimension name -> list of distinct values (for filter detection)."""
         self.model = model
-        self.metric_terms = sorted(
-            ((s.lower(), m["name"]) for m in model.metrics.values() for s in m.get("synonyms", []) + [m["label"]]),
-            key=lambda x: -len(x[0]),
-        )
-        self.dimension_terms = sorted(
-            ((s.lower(), d["name"]) for d in model.dimensions.values() for s in d.get("synonyms", []) + [d["label"]]),
-            key=lambda x: -len(x[0]),
-        )
-        self.value_terms = []
+        terms = lambda items: sorted(
+            ((normalize(s).strip(), name) for name, syns in items for s in syns), key=lambda x: -len(x[0]))
+        self.metric_terms = terms((m["name"], m.get("synonyms", []) + [m["label"]]) for m in model.metrics.values())
+        self.dimension_terms = terms((d["name"], d.get("synonyms", []) + [d["label"]])
+                                     for d in model.dimensions.values())
+        self.ambiguous_terms = sorted(((normalize(t).strip(), opts) for t, opts in model.ambiguous_terms.items()),
+                                      key=lambda x: -len(x[0]))
+        by_term: dict = {}
         for dim, values in dimension_values.items():
             for v in values:
-                lv = str(v).lower()
-                for form in {lv, lv + "s", lv + "es"}:
-                    self.value_terms.append((form, dim, v))
-        self.value_terms.sort(key=lambda x: -len(x[0]))
+                base = normalize(v).strip()
+                if len(base) < 2:
+                    continue
+                for form in {base, base + "s", base + "es"}:
+                    by_term.setdefault(form, [])
+                    if (dim, v) not in by_term[form]:
+                        by_term[form].append((dim, v))
+        # A value spelled like a dimension word ("Consultant" grade vs "consultants") is read as the dimension.
+        dim_words = {t for t, _ in self.dimension_terms} | {t for t, _ in self.metric_terms}
+        neg = r"(?:\b(" + "|".join(NEGATIONS) + r")\s+(?:the\s+)?)?"
+        self.value_terms = [(t, c, re.compile(neg + _phrase_regex(t)))
+                            for t, c in sorted(by_term.items(), key=lambda x: -len(x[0])) if t not in dim_words]
+        self.metric_terms = [(t, n, re.compile(_phrase_regex(t))) for t, n in self.metric_terms]
+        self.dimension_terms = [(t, n, re.compile(
+            r"(?:\b(?:by|per|across|each|every|split by|broken down by|breakdown by|for each)\s+)?" + _phrase_regex(t)))
+            for t, n in self.dimension_terms]
+        self.ambiguous_terms = [(t, o, re.compile(_phrase_regex(t))) for t, o in self.ambiguous_terms]
 
     def parse(self, question: str, context: SemanticQuery | None = None,
-              today: dt.date | None = None) -> Interpretation:
+              today: dt.date | None = None, clarifications: dict | None = None) -> Interpretation:
         today = today or dt.date.today()
+        clar = clarifications or {}
         raw = question.strip()
-        text = " " + re.sub(r"[^\w%\-\s']", " ", raw.lower()).replace("'s", "") + " "
-        text = re.sub(r"\s+", " ", text)
-        notes, matched = [], {}
+        lowered = raw.lower()
+        text = normalize(raw)
+        notes, ambiguities = [], []
         score = 0.0
 
         def consume(span: str):
             nonlocal text
             text = text.replace(span, " ", 1)
+
+        # 0. "why / what drove" questions ask for driver analysis
+        explain = bool(EXPLAIN_PATTERN.search(text))
+        claimed = "down" if DOWN_WORDS.search(text) else ("up" if UP_WORDS.search(text) else None)
+        if explain:
+            consume(EXPLAIN_PATTERN.search(text).group(0))
+            score += 0.5
 
         # 1. comparison ("vs last year") before time, so "last year" isn't read as the range.
         compare = None
@@ -217,8 +254,7 @@ class RuleParser:
             m = re.search(pattern, text)
             if m:
                 compare = kind
-                if kind == "previous_year" or "vs" in m.group(0) or "compar" in m.group(0) or "against" in m.group(0):
-                    consume(m.group(0))
+                consume(m.group(0))
                 break
 
         # 2. time range
@@ -226,6 +262,14 @@ class RuleParser:
         if span:
             consume(span)
             score += 1
+        elif VAGUE_TIME.search(text):
+            consume(VAGUE_TIME.search(text).group(0))
+            if "time" not in clar:
+                ambiguities.append({"kind": "time", "term": "recently"})
+        if clar.get("time"):
+            time_range = TimeRange(**clar["time"])
+        if clar.get("compare"):
+            compare = clar["compare"]
 
         # 3. time grain
         grain = None
@@ -246,58 +290,73 @@ class RuleParser:
             order_dir = "asc" if m.group(1) in ("bottom", "worst", "lowest", "smallest") else "desc"
             consume(m.group(0))
             score += 0.5
-        elif re.search(r"\b(lowest|least|worst|bottom|smallest|weakest|fewest)\b", text):
+        elif re.search(r"\b(lowest|least|worst|bottom|smallest|weakest|fewest|underperform\w*)\b", text):
             order_dir, wants_rank = "asc", True
         elif re.search(r"\b(highest|most|best|top|largest|biggest|strongest|leading|leader)\b", text):
             wants_rank = True
 
-        # 5. filters from known dimension values ("Electronics", "excluding Partner")
-        filters: dict = {}
-        for term, dim, value in self.value_terms:
-            rx = r"(?:\b(" + "|".join(NEGATIONS) + r")\s+(?:the\s+)?)?" + _phrase_regex(term)
-            m = re.search(rx, text)
-            if not m:
-                continue
-            op = "not_in" if m.group(1) else "in"
-            f = filters.setdefault((dim, op), Filter(dim, op, []))
-            if value not in f.values:
-                f.values.append(value)
-            consume(m.group(0))
-            score += 1
-
-        # 6. metrics
+        # 5. metrics (before values, so "how many consultants" is a metric)
         metrics = []
-        for term, name in self.metric_terms:
-            m = re.search(_phrase_regex(term), text)
+        for term, name, rx in self.metric_terms:
+            m = rx.search(text)
             if m:
                 if name not in metrics:
                     metrics.append(name)
                 consume(m.group(0))
                 score += 1.5
-
-        if not metrics and re.search(r"\bhow many\b", lowered := raw.lower()):
-            if re.search(r"\b(sell|sold|ship|shipped)\b", lowered) and "units" in self.model.metrics:
-                metrics.append("units")
+        if not metrics and re.search(r"\bhow many\b", lowered) and "headcount" in self.model.metrics:
+            if re.search(r"\b(consultants|people|employees|staff)\b", lowered):
+                metrics.append("headcount")
                 score += 1
+        if clar.get("metric"):
+            metrics = [clar["metric"]]
+        elif not metrics:
+            for term, options, rx in self.ambiguous_terms:
+                if rx.search(text):
+                    consume(term)
+                    ambiguities.append({"kind": "metric", "term": term, "options": options})
+                    break
+
+        # 6. filters from known dimension values ("India", "excluding Strategy")
+        filters: dict = {}
+        resolved = {r["term"]: r for r in clar.get("values", [])}
+        for term, candidates, rx in self.value_terms:
+            m = rx.search(text)
+            if not m:
+                continue
+            consume(m.group(0))
+            score += 1
+            if len(candidates) > 1:  # the same word is a value of several dimensions
+                if term in resolved:
+                    candidates = [(resolved[term]["dimension"], resolved[term]["value"])]
+                else:
+                    ambiguities.append({"kind": "value", "term": term, "options": candidates})
+                    continue
+            dim, value = candidates[0]
+            op = "not_in" if m.group(1) else "in"
+            f = filters.setdefault((dim, op), Filter(dim, op, []))
+            if value not in f.values:
+                f.values.append(value)
 
         # 7. group-by dimensions
         dims = []
-        for term, name in self.dimension_terms:
-            m = re.search(r"(?:\b(?:by|per|across|each|every|split by|broken down by|breakdown by|for each)\s+)?"
-                          + _phrase_regex(term), text)
+        for term, name, rx in self.dimension_terms:
+            m = rx.search(text)
             if m:
                 if name not in dims:
                     dims.append(name)
                 consume(m.group(0))
                 score += 1
+        if clar.get("dimension"):
+            dims = [clar["dimension"]]
 
         # 8. assemble, with follow-up merging
-        lowered = raw.lower()
-        is_follow_up = context is not None and (
+        is_follow_up = context is not None and bool(context.metrics) and (
             lowered.startswith(FOLLOW_UP_CUES) or (not metrics and score > 0 and len(lowered.split()) <= 6)
-        )
+        ) and not any(a["kind"] == "metric" for a in ambiguities)
         if is_follow_up:
             q = copy.deepcopy(context)
+            q.explain = explain
             notes.append("Building on your previous question.")
             if metrics:
                 q.metrics = metrics
@@ -312,51 +371,55 @@ class RuleParser:
             if compare:
                 q.compare = compare
             for f in filters.values():
-                # A new value for the same dimension replaces the old filter ("what about South?")
+                # A new value for the same dimension replaces the old filter ("what about India?")
                 q.filters = [x for x in q.filters if x.dimension != f.dimension] + [f]
             if limit:
                 q.limit, q.order_dir = limit, order_dir
         else:
             q = SemanticQuery(
-                metrics=metrics or ["revenue"],
+                metrics=metrics,
                 dimensions=dims,
                 filters=list(filters.values()),
                 time_range=time_range,
-                time_grain=(self.model.time.get("default_grain", "month") if grain == "auto" else grain),
+                time_grain=((self.model.time or {}).get("default_grain", "month") if grain == "auto" else grain),
                 compare=compare,
                 order_dir=order_dir,
                 limit=limit,
+                explain=explain,
             )
-            if not metrics:
-                notes.append("No metric named, so I used Revenue.")
+            if not metrics and not any(a["kind"] == "metric" for a in ambiguities):
+                ambiguities.append({"kind": "metric", "term": None, "options": list(self.model.featured_metrics)})
 
-        if q.compare and not q.time_range:
-            if q.compare == "previous_year":
+        if q.explain:
+            # "Why" compares two periods; the time question is asked rather than guessed.
+            if not q.time_range and "time" not in clar and not any(a["kind"] == "time" for a in ambiguities):
+                ambiguities.append({"kind": "explain_period", "term": None})
+            q.compare = q.compare or "previous_period"
+            q.dimensions, q.time_grain, q.limit = [], None, None
+        else:
+            if q.compare and not q.time_range:
                 q.time_range = TimeRange(dt.date(today.year, 1, 1).isoformat(),
                                          (today + dt.timedelta(days=1)).isoformat(), "Year to date")
-            else:
-                q.time_range = TimeRange(_add_months(_month_start(today), -1).isoformat(),
-                                         _month_start(today).isoformat(), "Last month")
-            notes.append(f"No period given for the comparison, so I used {q.time_range.label.lower()}.")
-        if q.time_grain and not q.time_range:
-            q.time_range = default_trend_range(q.time_grain, today)
-            notes.append(f"No period given for the trend, so I used {q.time_range.label.lower()}.")
-        if limit and not q.dimensions and not q.time_grain:
-            # "top 5" with no dimension: default to the most natural ranking dimension
-            q.dimensions = ["product"]
-            notes.append("Ranked by product, since no breakdown was named.")
-        if q.limit and q.dimensions:
-            q.order_by = q.metrics[0]
-        if wants_rank and q.dimensions and not q.time_grain:
-            q.order_by, q.order_dir = q.metrics[0], order_dir
+                notes.append("No period given for the comparison, so I used year to date.")
+            if q.time_grain and not q.time_range:
+                q.time_range = default_trend_range(q.time_grain, today)
+                notes.append(f"No period given for the trend, so I used {q.time_range.label.lower()}.")
+            if limit and not q.dimensions and not q.time_grain:
+                ambiguities.append({"kind": "dimension", "term": None})
+            if q.limit and q.dimensions:
+                q.order_by = q.metrics[0] if q.metrics else None
+            if wants_rank and q.dimensions and not q.time_grain and q.metrics:
+                q.order_by, q.order_dir = q.metrics[0], order_dir
 
         matched = {"metrics": metrics, "dimensions": dims, "filters": [f.__dict__ for f in filters.values()],
-                   "time": time_range.label if time_range else None, "grain": grain, "compare": compare}
+                   "time": time_range.label if time_range else None, "grain": grain, "compare": compare,
+                   "explain": explain}
         leftovers = [w for w in text.split() if len(w) > 2 and w not in STOPWORDS]
         confidence = min(1.0, score / 3.0) * (0.6 if len(leftovers) > 3 else 1.0)
-        if not metrics and not dims and not filters and not time_range and not is_follow_up:
+        if (not metrics and not dims and not filters and not time_range and not is_follow_up and not explain
+                and not any(a["kind"] == "metric" and a["term"] for a in ambiguities)):
             confidence = 0.0
-        return Interpretation(q, confidence, notes, is_follow_up, matched)
+        return Interpretation(q, confidence, notes, is_follow_up, matched, ambiguities, claimed)
 
 
 STOPWORDS = set("""
@@ -366,4 +429,5 @@ that those these a an by per vs between from into over across each every it its 
 any some value values number numbers figure figures report data look like doing perform performance breakdown
 split broken down level amount sum versus about latest current recent so far rank ranked ranking compare
 growth grow grew change changed increase decrease delta highest lowest most least best worst top bottom had now just only
+drop dropped fall fell decline declined up rise rose happen happened why driving drove caused
 """.split())

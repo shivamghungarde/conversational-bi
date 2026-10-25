@@ -1,2 +1,0 @@
-# Core app has no dependencies. Optional: Claude interpreter for unusual phrasings.
-anthropic>=0.125

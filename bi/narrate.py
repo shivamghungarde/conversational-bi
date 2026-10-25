@@ -36,6 +36,21 @@ def change_phrase(change) -> str:
     return f"{'up' if change > 0 else 'down'} {abs(change) * 100:.1f}%"
 
 
+def point_or_pct(v, is_percent: bool) -> str:
+    """Magnitude of a change: points for percentage metrics, percent otherwise."""
+    if v is None:
+        return ""
+    return f"{abs(v) * 100:.1f} pts" if is_percent else f"{abs(v) * 100:.1f}%"
+
+
+def metric_change(model: SemanticModel, metric: str, v) -> str:
+    if v is None:
+        return ""
+    if abs(v) < 0.0005:
+        return "flat"
+    return f"{'up' if v > 0 else 'down'} {point_or_pct(v, model.is_percent(metric))}"
+
+
 def describe(model: SemanticModel, q: SemanticQuery) -> list:
     """Interpretation chips: what the system understood, in business terms."""
     chips = [{"kind": "metric", "label": model.metrics[m]["label"], "value": m} for m in q.metrics]
@@ -81,7 +96,7 @@ def answer(model: SemanticModel, q: SemanticQuery, result: dict) -> str:
             prev_label = "the same period last year" if q.compare == "previous_year" else "the previous period"
             ch = r.get(f"{m}__change")
             if ch is not None:
-                text += f" That's {change_phrase(ch)} from {fmt(r.get(f'{m}__prev'), kind)} in {prev_label}."
+                text += f" That's {metric_change(model, m, ch)} from {fmt(r.get(f'{m}__prev'), kind)} in {prev_label}."
             else:
                 text += f" There's no data for {prev_label} to compare against."
         return _capital(text)
@@ -118,7 +133,10 @@ def answer(model: SemanticModel, q: SemanticQuery, result: dict) -> str:
         first, last = complete[0], complete[-1]
         peak = max(complete, key=lambda r: r[m])
         low = min(complete, key=lambda r: r[m])
-        delta = change_phrase((last[m] - first[m]) / abs(first[m])) if first[m] else ""
+        if model.is_percent(m):
+            delta = metric_change(model, m, last[m] - first[m])
+        else:
+            delta = change_phrase((last[m] - first[m]) / abs(first[m])) if first[m] else ""
         text = (f"{mlabel} went from {fmt(first[m], kind)} in {first['period']} to {fmt(last[m], kind)} "
                 f"in {last['period']}" + (f" ({delta})" if delta else "") + f"{scope}. ")
         text += f"The peak was {peak['period']} at {fmt(peak[m], kind)}"
@@ -151,11 +169,11 @@ def answer(model: SemanticModel, q: SemanticQuery, result: dict) -> str:
         if movers:
             best = max(movers, key=lambda r: r[f"{m}__change"])
             worst = min(movers, key=lambda r: r[f"{m}__change"])
-            text += f" Biggest gain: {label(best)} ({change_phrase(best[f'{m}__change'])})."
+            text += f" Biggest gain: {label(best)} ({metric_change(model, m, best[f'{m}__change'])})."
             if worst is not best:
-                text += f" Weakest: {label(worst)} ({change_phrase(worst[f'{m}__change'])})."
-        if totals.get(f"{m}__change") is not None and metric.get("additive"):
-            text += f" Overall {mlabel.lower()} is {change_phrase(totals[f'{m}__change'])}."
+                text += f" Weakest: {label(worst)} ({metric_change(model, m, worst[f'{m}__change'])})."
+        if totals.get(f"{m}__change") is not None:
+            text += f" Overall {mlabel.lower()} is {metric_change(model, m, totals[f'{m}__change'])}."
     elif total is not None and len(q.dimensions) == 1 and not q.limit:
         if metric.get("additive"):
             text += f" Across all {len(ordered)} {plural}, the total is {fmt(total, kind)}."
@@ -177,10 +195,13 @@ def suggestions(model: SemanticModel, q: SemanticQuery) -> list:
                         "patch": {"dimensions": [d["name"]], "time_grain": None}})
     if not q.time_grain:
         out.append({"label": "Show as a monthly trend", "patch": {"time_grain": "month", "compare": None}})
+    if q.time_range and not q.time_grain:
+        out.insert(0, {"label": f"Why did {model.metrics[q.metrics[0]]['label'].lower()} change?",
+                       "patch": {"explain": True, "compare": q.compare or "previous_period", "dimensions": []}})
     if not q.compare and q.time_range and not q.time_grain:
         out.append({"label": "Compare with previous period", "patch": {"compare": "previous_period"}})
         out.append({"label": "Compare with last year", "patch": {"compare": "previous_year"}})
-    return out[:6]
+    return out[:7]
 
 
 def _verb(q: SemanticQuery) -> str:

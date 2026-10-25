@@ -1,0 +1,440 @@
+{
+  "name": "professional_services",
+  "label": "Delivery & Revenue",
+  "description": "Consultant timesheets: capacity, billable hours, utilization and revenue by practice, region, grade, client and project.",
+  "base_table": "timesheets",
+  "base_alias": "t",
+  "joins": {
+    "employees": {
+      "table": "employees",
+      "alias": "e",
+      "on": "t.employee_id = e.employee_id"
+    },
+    "projects": {
+      "table": "projects",
+      "alias": "p",
+      "on": "t.project_id = p.project_id",
+      "type": "left"
+    },
+    "clients": {
+      "table": "clients",
+      "alias": "c",
+      "on": "p.client_id = c.client_id",
+      "type": "left",
+      "requires": "projects"
+    }
+  },
+  "time_dimension": {
+    "name": "work_date",
+    "label": "Work date",
+    "sql": "t.work_date",
+    "default_grain": "month",
+    "freshness_sql": "SELECT MAX(submitted_at) FROM timesheets"
+  },
+  "featured_metrics": [
+    "utilization",
+    "revenue",
+    "billable_hours",
+    "headcount"
+  ],
+  "metrics": [
+    {
+      "name": "utilization",
+      "label": "Utilization",
+      "sql": "SUM(t.billable_hours) * 1.0 / NULLIF(SUM(t.available_hours), 0)",
+      "format": "percent",
+      "additive": false,
+      "ratio": {
+        "numerator": "billable_hours",
+        "denominator": "available_hours"
+      },
+      "description": "Billable hours as a share of available hours.",
+      "synonyms": [
+        "utilization",
+        "utilisation",
+        "utilization rate",
+        "utilisation rate",
+        "util",
+        "billability",
+        "chargeability",
+        "billable utilization",
+        "billable utilisation"
+      ],
+      "explain_by": [
+        "practice",
+        "region",
+        "grade",
+        "consultant"
+      ]
+    },
+    {
+      "name": "revenue",
+      "label": "Revenue",
+      "sql": "SUM(t.revenue)",
+      "format": "currency",
+      "additive": true,
+      "description": "Fees earned from billable hours (after fixed-fee and retainer realization).",
+      "synonyms": [
+        "revenue",
+        "revenues",
+        "sales",
+        "billings",
+        "fees",
+        "income",
+        "top line",
+        "turnover"
+      ]
+    },
+    {
+      "name": "billable_hours",
+      "label": "Billable hours",
+      "sql": "SUM(t.billable_hours)",
+      "format": "number",
+      "additive": true,
+      "description": "Hours charged to client projects.",
+      "synonyms": [
+        "billable hours",
+        "billed hours",
+        "chargeable hours",
+        "hours billed",
+        "client hours"
+      ]
+    },
+    {
+      "name": "available_hours",
+      "label": "Available hours",
+      "sql": "SUM(t.available_hours)",
+      "format": "number",
+      "additive": true,
+      "description": "Capacity: working hours excluding leave.",
+      "synonyms": [
+        "available hours",
+        "capacity",
+        "capacity hours",
+        "available capacity"
+      ],
+      "explain_by": [
+        "practice",
+        "region",
+        "grade",
+        "consultant"
+      ]
+    },
+    {
+      "name": "nonbillable_hours",
+      "label": "Non-billable hours",
+      "sql": "SUM(t.nonbillable_hours)",
+      "format": "number",
+      "additive": true,
+      "description": "Available hours not charged to a client (bench, internal work, pre-sales).",
+      "synonyms": [
+        "non-billable hours",
+        "nonbillable hours",
+        "non billable hours",
+        "bench hours",
+        "internal hours",
+        "unbilled hours",
+        "bench time"
+      ],
+      "explain_by": [
+        "practice",
+        "region",
+        "grade",
+        "consultant"
+      ]
+    },
+    {
+      "name": "bill_rate",
+      "label": "Average bill rate",
+      "sql": "SUM(t.revenue) * 1.0 / NULLIF(SUM(t.billable_hours), 0)",
+      "format": "currency",
+      "additive": false,
+      "ratio": {
+        "numerator": "revenue",
+        "denominator": "billable_hours"
+      },
+      "description": "Revenue per billable hour.",
+      "synonyms": [
+        "bill rate",
+        "billing rate",
+        "average bill rate",
+        "avg bill rate",
+        "realized rate",
+        "hourly rate"
+      ]
+    },
+    {
+      "name": "headcount",
+      "label": "Headcount",
+      "sql": "COUNT(DISTINCT t.employee_id)",
+      "format": "number",
+      "additive": false,
+      "description": "Distinct consultants with recorded capacity in the period.",
+      "synonyms": [
+        "headcount",
+        "head count",
+        "fte",
+        "ftes",
+        "number of consultants",
+        "number of people",
+        "number of employees",
+        "how many consultants",
+        "how many people",
+        "staff count"
+      ],
+      "explain_by": [
+        "practice",
+        "region",
+        "grade",
+        "consultant"
+      ]
+    },
+    {
+      "name": "gross_profit",
+      "label": "Gross profit",
+      "sql": "SUM(t.revenue - t.cost)",
+      "format": "currency",
+      "additive": true,
+      "description": "Revenue minus delivery (salary) cost.",
+      "synonyms": [
+        "gross profit",
+        "profit",
+        "profits",
+        "contribution"
+      ]
+    },
+    {
+      "name": "gross_margin",
+      "label": "Gross margin",
+      "sql": "SUM(t.revenue - t.cost) * 1.0 / NULLIF(SUM(t.revenue), 0)",
+      "format": "percent",
+      "additive": false,
+      "ratio": {
+        "numerator": "gross_profit",
+        "denominator": "revenue"
+      },
+      "description": "Gross profit as a share of revenue.",
+      "synonyms": [
+        "gross margin",
+        "margin",
+        "margins",
+        "profit margin",
+        "delivery margin"
+      ]
+    },
+    {
+      "name": "cost",
+      "label": "Delivery cost",
+      "sql": "SUM(t.cost)",
+      "format": "currency",
+      "additive": true,
+      "description": "Salary cost of available hours.",
+      "synonyms": [
+        "cost",
+        "costs",
+        "delivery cost",
+        "labour cost",
+        "labor cost",
+        "people cost"
+      ]
+    }
+  ],
+  "ambiguous_terms": {
+    "performance": [
+      "utilization",
+      "revenue",
+      "gross_margin"
+    ],
+    "performing": [
+      "utilization",
+      "revenue",
+      "gross_margin"
+    ],
+    "productivity": [
+      "utilization",
+      "billable_hours"
+    ],
+    "productive": [
+      "utilization",
+      "billable_hours"
+    ],
+    "busy": [
+      "utilization",
+      "billable_hours"
+    ],
+    "hours": [
+      "billable_hours",
+      "available_hours",
+      "nonbillable_hours"
+    ],
+    "rate": [
+      "utilization",
+      "bill_rate"
+    ],
+    "profitability": [
+      "gross_margin",
+      "gross_profit"
+    ],
+    "profitable": [
+      "gross_margin",
+      "gross_profit"
+    ],
+    "growth": [
+      "revenue",
+      "headcount"
+    ],
+    "doing": [
+      "utilization",
+      "revenue"
+    ]
+  },
+  "dimensions": [
+    {
+      "name": "practice",
+      "label": "Practice",
+      "plural": "practices",
+      "sql": "e.practice",
+      "join": "employees",
+      "synonyms": [
+        "practice",
+        "practices",
+        "service line",
+        "service lines",
+        "capability",
+        "capabilities",
+        "competency"
+      ]
+    },
+    {
+      "name": "region",
+      "label": "Region",
+      "plural": "regions",
+      "sql": "e.region",
+      "join": "employees",
+      "synonyms": [
+        "region",
+        "regions",
+        "geography",
+        "geo",
+        "location",
+        "locations",
+        "delivery center",
+        "market"
+      ]
+    },
+    {
+      "name": "grade",
+      "label": "Grade",
+      "plural": "grades",
+      "sql": "e.grade",
+      "join": "employees",
+      "synonyms": [
+        "grade",
+        "grades",
+        "level",
+        "levels",
+        "seniority",
+        "band",
+        "bands",
+        "role",
+        "roles",
+        "title"
+      ]
+    },
+    {
+      "name": "consultant",
+      "label": "Consultant",
+      "plural": "consultants",
+      "sql": "e.employee_name",
+      "join": "employees",
+      "synonyms": [
+        "consultant",
+        "consultants",
+        "employee",
+        "employees",
+        "person",
+        "people",
+        "resource",
+        "resources",
+        "individual",
+        "staff member"
+      ]
+    },
+    {
+      "name": "client",
+      "label": "Client",
+      "plural": "clients",
+      "sql": "COALESCE(c.client_name, 'Bench / internal')",
+      "join": "clients",
+      "synonyms": [
+        "client",
+        "clients",
+        "customer",
+        "customers",
+        "account",
+        "accounts"
+      ]
+    },
+    {
+      "name": "industry",
+      "label": "Industry",
+      "plural": "industries",
+      "sql": "COALESCE(c.industry, 'Internal')",
+      "join": "clients",
+      "synonyms": [
+        "industry",
+        "industries",
+        "sector",
+        "sectors",
+        "vertical",
+        "verticals"
+      ]
+    },
+    {
+      "name": "project",
+      "label": "Project",
+      "plural": "projects",
+      "sql": "COALESCE(p.project_name, 'Bench / internal')",
+      "join": "projects",
+      "synonyms": [
+        "project",
+        "projects",
+        "engagement",
+        "engagements",
+        "programme",
+        "program"
+      ]
+    },
+    {
+      "name": "billing_type",
+      "label": "Billing type",
+      "plural": "billing types",
+      "sql": "COALESCE(p.billing_type, 'Non-billable')",
+      "join": "projects",
+      "synonyms": [
+        "billing type",
+        "billing types",
+        "contract type",
+        "commercial model",
+        "pricing model"
+      ]
+    }
+  ],
+  "sample_queries": [
+    "What is utilization this month?",
+    "Utilization by practice last month",
+    "Why did utilization drop last month?",
+    "Revenue by client this quarter",
+    "Top 5 clients by revenue year to date",
+    "Monthly utilization trend",
+    "How did revenue compare to last year?",
+    "What drove the change in revenue last month?",
+    "Which practice has the lowest utilization this quarter?",
+    "Utilization for India by grade",
+    "Average bill rate by grade",
+    "Headcount by region",
+    "Non-billable hours by practice last month",
+    "How is performance by practice?",
+    "Gross margin by billing type this year"
+  ]
+}

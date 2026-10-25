@@ -1,0 +1,1252 @@
+Date,Consultant,Practice,Region,Grade,Client,Available Hours,Billable Hours,Revenue ($)
+03/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+03/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+03/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+03/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+03/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+03/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+03/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.5,$500.50
+03/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.0,$785.00
+03/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.5,"$1,560.00"
+03/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+03/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+03/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,8.0,"$1,256.00"
+03/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,8.0,$775.20
+03/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+03/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.0,$840.00
+03/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+03/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+03/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,5.5,$522.50
+03/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+03/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+03/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.0,$486.00
+03/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.5,$910.00
+03/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+03/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+03/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+04/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+04/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+04/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+04/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+04/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+04/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.0,$312.00
+04/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.5,"$1,387.50"
+04/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.0,$462.00
+04/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+04/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+04/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+04/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.0,$912.00
+04/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+04/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+04/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.5,$726.75
+04/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+04/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.5,"$1,050.00"
+04/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+04/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+04/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,5.5,$522.50
+04/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+04/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+04/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+04/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,8.0,"$1,120.00"
+04/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+04/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.5,$286.00
+04/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.0,$739.20
+05/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,5.0,$700.00
+05/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+05/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,4.0,$651.20
+05/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+05/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+05/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.5,"$1,202.50"
+05/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.0,$462.00
+05/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,099.00"
+05/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+05/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+05/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,5.0,"$1,364.00"
+05/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+05/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,560.00"
+05/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.5,"$1,177.50"
+05/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+05/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+05/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.5,"$1,050.00"
+05/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+05/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.0,$665.00
+05/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+05/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+05/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,8.0,$648.00
+05/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.0,$840.00
+05/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+05/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+05/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+06/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+06/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+06/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,5.0,$814.00
+06/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+06/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+06/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+06/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+06/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,8.0,$616.00
+06/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.0,$942.00
+06/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+06/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.0,$541.50
+06/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+06/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+06/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+06/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+06/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,8.0,$775.20
+06/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+06/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.5,"$1,050.00"
+06/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,7.0,"$1,295.00"
+06/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+06/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+06/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+06/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,5.0,$385.00
+06/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.5,$526.50
+06/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+06/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+06/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.5,$390.00
+06/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.0,$739.20
+07/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,5.5,$770.00
+07/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+07/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.0,"$1,139.60"
+07/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+07/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.0,$690.80
+07/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+07/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+07/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.0,$462.00
+07/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.0,$785.00
+07/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+07/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+07/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+07/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,368.00"
+07/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,560.00"
+07/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,8.0,"$1,256.00"
+07/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,4.5,$436.05
+07/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,5.5,$677.60
+07/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.0,$980.00
+07/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,7.0,"$1,295.00"
+07/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+07/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.0,$665.00
+07/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+07/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+07/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.5,$607.50
+07/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.5,"$1,050.00"
+07/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+07/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+07/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+10/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+10/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+10/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+10/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+10/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,5.5,$286.00
+10/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+10/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,5.5,$423.50
+10/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+10/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,8.0,"$1,920.00"
+10/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+10/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+10/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+10/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+10/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.5,"$1,177.50"
+10/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+10/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+10/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,8.0,"$1,120.00"
+10/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+10/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+10/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+10/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+10/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+10/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,8.0,$648.00
+10/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.5,$910.00
+10/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.5,"$1,080.00"
+10/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+10/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+11/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+11/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+11/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+11/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+11/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+11/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+11/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+11/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.0,$462.00
+11/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.0,$942.00
+11/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+11/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+11/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+11/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+11/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+11/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+11/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,4.0,$492.80
+11/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,5.5,$770.00
+11/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.5,"$1,202.50"
+11/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+11/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.0,$665.00
+11/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+11/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+11/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+11/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+11/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+11/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+11/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+12/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+12/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+12/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.0,"$1,139.60"
+12/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.5,$370.50
+12/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.0,$312.00
+12/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+12/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,8.0,$616.00
+12/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+12/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.5,"$1,560.00"
+12/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+12/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+12/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,596.00"
+12/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,200.00"
+12/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,8.0,"$1,256.00"
+12/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+12/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+12/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.5,$910.00
+12/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+12/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+12/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,5.5,$522.50
+12/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+12/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+12/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.5,$607.50
+12/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,5.0,$700.00
+12/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+12/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.5,$286.00
+12/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+13/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+13/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+13/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.0,"$1,139.60"
+13/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+13/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+13/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+13/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.5,"$1,387.50"
+13/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.0,$462.00
+13/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+13/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+13/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+13/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+13/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+13/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+13/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+13/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.5,"$1,050.00"
+13/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+13/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+13/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+13/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+13/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,8.0,$648.00
+13/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.5,"$1,050.00"
+13/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+13/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+13/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+14/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+14/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+14/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+14/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+14/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+14/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+14/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,7.0,$539.00
+14/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+14/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+14/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,5.5,$496.38
+14/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+14/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+14/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+14/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+14/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+14/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+14/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.5,$910.00
+14/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+14/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+14/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.0,$665.00
+14/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+14/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+14/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.5,$607.50
+14/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.0,$840.00
+14/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.5,$286.00
+14/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.5,$800.80
+17/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,5.5,$770.00
+17/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+17/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.5,"$1,058.20"
+17/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+17/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.5,$898.04
+17/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+17/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.5,"$1,017.50"
+17/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,7.5,$577.50
+17/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+17/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.5,"$1,080.00"
+17/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,8.0,$722.00
+17/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+17/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+17/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.5,"$1,177.50"
+17/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.5,$532.95
+17/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+17/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,8.0,"$1,120.00"
+17/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.5,"$1,202.50"
+17/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+17/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+17/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+17/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+17/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,8.0,$648.00
+17/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.5,"$1,050.00"
+17/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+17/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.5,$390.00
+17/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.0,$739.20
+18/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,5.5,$770.00
+18/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+18/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,5.0,$814.00
+18/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+18/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.0,$690.80
+18/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+18/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.5,$500.50
+18/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.5,"$1,080.00"
+18/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+18/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+18/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,026.00"
+18/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+18/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,8.0,"$1,256.00"
+18/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+18/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+18/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.5,"$1,050.00"
+18/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+18/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+18/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+18/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,5.0,$385.00
+18/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+18/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.5,$910.00
+18/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.0,$960.00
+18/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.5,$390.00
+19/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+19/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+19/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.5,"$1,036.20"
+19/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+19/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.5,"$1,387.50"
+19/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+19/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+19/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+19/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+19/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,482.00"
+19/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,560.00"
+19/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,8.0,"$1,256.00"
+19/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,8.0,$775.20
+19/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+19/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.0,$840.00
+19/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,8.0,"$1,480.00"
+19/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+19/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+19/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+19/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+19/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.5,$526.50
+19/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,8.0,"$1,120.00"
+19/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.5,"$1,080.00"
+19/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+19/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.0,$739.20
+20/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.5,"$1,050.00"
+20/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+20/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,5.0,$814.00
+20/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+20/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.5,"$1,036.20"
+20/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+20/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+20/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,7.0,$539.00
+20/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+20/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+20/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+20/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+20/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,482.00"
+20/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+20/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.0,$785.00
+20/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+20/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.0,$980.00
+20/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,7.0,"$1,295.00"
+20/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+20/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+20/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+20/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+20/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.0,$486.00
+20/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,6.0,$840.00
+20/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+20/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+20/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.5,$800.80
+21/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+21/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+21/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.5,"$1,221.00"
+21/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+21/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+21/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+21/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+21/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.5,$500.50
+21/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.0,$942.00
+21/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+21/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+21/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+21/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,026.00"
+21/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+21/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+21/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+21/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,4.5,$554.40
+21/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,5.0,$700.00
+21/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,7.0,"$1,295.00"
+21/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+21/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.0,$665.00
+21/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+21/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+21/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.5,$607.50
+21/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+21/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+21/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+21/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+24/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+24/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+24/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,5.0,$814.00
+24/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+24/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+24/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+24/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+24/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.5,$500.50
+24/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+24/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+24/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.0,$541.50
+24/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+24/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+24/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+24/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+24/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+24/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+24/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,7.0,$980.00
+24/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,6.0,"$1,110.00"
+24/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+24/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,4.5,$427.50
+24/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+24/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+24/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+24/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+24/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+24/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+24/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+25/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+25/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+25/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+25/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+25/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+25/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.0,$312.00
+25/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+25/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,7.5,$577.50
+25/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+25/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+25/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+25/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,5.0,"$1,364.00"
+25/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,026.00"
+25/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+25/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+25/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+25/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+25/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,5.5,$770.00
+25/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,4.5,$832.50
+25/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+25/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+25/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+25/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,5.5,$423.50
+25/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.5,$526.50
+25/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,8.0,"$1,120.00"
+25/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+25/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+25/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+26/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+26/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+26/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.5,"$1,221.00"
+26/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+26/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.5,"$1,036.20"
+26/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+26/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.5,"$1,017.50"
+26/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,8.0,$616.00
+26/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+26/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+26/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+26/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+26/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,680.00"
+26/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+26/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+26/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,5.5,$677.60
+26/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,8.0,"$1,120.00"
+26/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,5.0,$925.00
+26/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+26/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+26/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+26/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+26/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.5,$607.50
+26/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+26/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+26/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.0,$260.00
+26/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+27/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+27/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+27/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,6.0,$976.80
+27/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+27/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.5,$759.88
+27/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,5.5,$286.00
+27/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+27/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,7.5,$577.50
+27/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+27/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+27/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,5.5,$496.38
+27/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+27/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+27/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+27/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.5,$863.50
+27/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+27/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+27/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.5,$910.00
+27/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,5.5,"$1,017.50"
+27/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+27/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+27/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+27/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+27/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,6.5,$526.50
+27/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,8.0,"$1,120.00"
+27/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+27/08/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+27/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,4.5,$554.40
+28/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+28/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+28/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.0,"$1,139.60"
+28/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+28/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+28/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+28/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+28/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.0,$942.00
+28/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+28/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+28/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+28/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+28/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+28/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+28/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+28/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+28/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.0,$840.00
+28/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,8.0,"$1,480.00"
+28/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+28/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+28/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+28/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+28/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+28/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.0,$980.00
+28/08/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+28/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+31/08/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+31/08/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+31/08/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Granite Telecom,8.0,7.0,"$1,139.60"
+31/08/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.5,$370.50
+31/08/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+31/08/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+31/08/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+31/08/2026,Ananya Mehta,Data & AI,India,Consultant,Juniper Pharma,8.0,6.5,$500.50
+31/08/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+31/08/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+31/08/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.0,$541.50
+31/08/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+31/08/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,596.00"
+31/08/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+31/08/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+31/08/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+31/08/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,5.5,$677.60
+31/08/2026,Nina Walsh,Data & AI,North America,Consultant,Juniper Pharma,8.0,6.5,$910.00
+31/08/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Juniper Pharma,8.0,7.5,"$1,387.50"
+31/08/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.5,$847.88
+31/08/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+31/08/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+31/08/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+31/08/2026,Zara Silva,Data & AI,APAC,Analyst,Juniper Pharma,8.0,7.0,$567.00
+31/08/2026,Kenji Chen,Cloud,North America,Consultant,Granite Telecom,8.0,7.5,"$1,050.00"
+31/08/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+01/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.5,"$1,050.00"
+01/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+01/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,5.5,$966.62
+01/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+01/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+01/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+01/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+01/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.0,$785.00
+01/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+01/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+01/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+01/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.0,$912.00
+01/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+01/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+01/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,8.0,$775.20
+01/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+01/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.0,$840.00
+01/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+01/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.5,$847.88
+01/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+01/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,5.5,$423.50
+01/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+01/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+01/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.5,"$1,080.00"
+01/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+01/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+01/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,5.5,$423.50
+01/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+01/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+01/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.0,$462.00
+01/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+02/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+02/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+02/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,054.50"
+02/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,5.5,$271.70
+02/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+02/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+02/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+02/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+02/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+02/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+02/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+02/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+02/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,3.5,$798.00
+02/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,680.00"
+02/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+02/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.5,$532.95
+02/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+02/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.0,$840.00
+02/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+02/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,5.5,$522.50
+02/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+02/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+02/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+02/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+02/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+02/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+02/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.5,$800.80
+02/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+02/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+02/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.5,$577.50
+02/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+03/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+03/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+03/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,5.5,$966.62
+03/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,5.5,$271.70
+03/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.5,$898.04
+03/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+03/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+03/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.5,$508.20
+03/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+03/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+03/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+03/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.5,"$1,227.60"
+03/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+03/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+03/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+03/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+03/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.5,$910.00
+03/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+03/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+03/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+03/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+03/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+03/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.0,$427.68
+03/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+03/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,7.5,"$1,800.00"
+03/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+03/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+03/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+03/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+03/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+03/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+03/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.0,$539.00
+04/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.5,"$1,050.00"
+04/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+04/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,230.25"
+04/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+04/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.5,"$1,036.20"
+04/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,5.5,$286.00
+04/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.5,"$1,202.50"
+04/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,5.0,$338.80
+04/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+04/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+04/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+04/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.0,$545.60
+04/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.0,$912.00
+04/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+04/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+04/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,8.0,$775.20
+04/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+04/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.5,$910.00
+04/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.0,$925.00
+04/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+04/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+04/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,4.5,$346.50
+04/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+04/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+04/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+04/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+04/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+04/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+04/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+04/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+04/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.0,$462.00
+04/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,5.5,$423.50
+07/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+07/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+07/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,054.50"
+07/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+07/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.5,"$1,036.20"
+07/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+07/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+07/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,8.0,$542.08
+07/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,099.00"
+07/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+07/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+07/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+07/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+07/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+07/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+07/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+07/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+07/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.5,"$1,050.00"
+07/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+07/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+07/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+07/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+07/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+07/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+07/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+07/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+07/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+07/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.5,$800.80
+07/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+07/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+07/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+07/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.0,$539.00
+07/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+08/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+08/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+08/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,230.25"
+08/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+08/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+08/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+08/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.5,"$1,202.50"
+08/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.0,$474.32
+08/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+08/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+08/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+08/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+08/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+08/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,680.00"
+08/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+08/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+08/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+08/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,5.5,$770.00
+08/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,202.50"
+08/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+08/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+08/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+08/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+08/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+08/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+08/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+08/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+08/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+08/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+08/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+08/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.0,$462.00
+08/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,5.5,$423.50
+09/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,4.0,$560.00
+09/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+09/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+09/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,5.0,$247.00
+09/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+09/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+09/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.0,"$1,295.00"
+09/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+09/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+09/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+09/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+09/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,3.5,$798.00
+09/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,200.00"
+09/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+09/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+09/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+09/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.5,"$1,050.00"
+09/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,4.5,$832.50
+09/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.5,$847.88
+09/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+09/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+09/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+09/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+09/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+09/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+09/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.5,$286.00
+09/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,8.0,$985.60
+09/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,8.0,$616.00
+09/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+09/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,5.5,$423.50
+09/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+09/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+10/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+10/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+10/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,054.50"
+10/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+10/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+10/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+10/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.5,"$1,017.50"
+10/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.0,$406.56
+10/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,8.0,"$1,256.00"
+10/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.0,$960.00
+10/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+10/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.0,$545.60
+10/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,3.0,$684.00
+10/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+10/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,3.5,$549.50
+10/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+10/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.5,"$1,050.00"
+10/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+10/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+10/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+10/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+10/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+10/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+10/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+10/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+10/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,8.0,$416.00
+10/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,5.5,$677.60
+10/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,6.0,$462.00
+10/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+10/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.0,$462.00
+10/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.5,$577.50
+10/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,5.5,$423.50
+11/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+11/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,5.5,$966.62
+11/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+11/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,7.0,$967.12
+11/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+11/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+11/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+11/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.0,$960.00
+11/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+11/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+11/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+11/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,080.00"
+11/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+11/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+11/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+11/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.0,$980.00
+11/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+11/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+11/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+11/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+11/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+11/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+11/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+11/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+11/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,5.5,$286.00
+11/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,5.0,$616.00
+11/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+11/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+11/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+11/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.5,$577.50
+11/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.0,$462.00
+14/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.5,"$1,050.00"
+14/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+14/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,5.5,$966.62
+14/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+14/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+14/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+14/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+14/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.0,$406.56
+14/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.0,$942.00
+14/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+14/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.0,$541.50
+14/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+14/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+14/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,200.00"
+14/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+14/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.5,$532.95
+14/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+14/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,8.0,"$1,120.00"
+14/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+14/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+14/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+14/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+14/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.0,$427.68
+14/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+14/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+14/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+14/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+14/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+14/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+14/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+14/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+15/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+15/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+15/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,5.5,$966.62
+15/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+15/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.5,$898.04
+15/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+15/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.5,"$1,387.50"
+15/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.5,$508.20
+15/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,177.50"
+15/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,7.0,"$1,680.00"
+15/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+15/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+15/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+15/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,200.00"
+15/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+15/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+15/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,5.5,$677.60
+15/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.5,$910.00
+15/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+15/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.5,$847.88
+15/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+15/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+15/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+15/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.0,$427.68
+15/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,5.0,$616.00
+15/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+15/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+15/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+15/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+15/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+15/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+15/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.0,$462.00
+15/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.5,$577.50
+16/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+16/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+16/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.5,$759.88
+16/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+16/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.0,$925.00
+16/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.5,$508.20
+16/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+16/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+16/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+16/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+16/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,368.00"
+16/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,560.00"
+16/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.5,"$1,020.50"
+16/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+16/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+16/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.0,$840.00
+16/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+16/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+16/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+16/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+16/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+16/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+16/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+16/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+16/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+16/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.5,$800.80
+16/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+16/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+16/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+16/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.5,$500.50
+17/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+17/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+17/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,054.50"
+17/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+17/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.5,$759.88
+17/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+17/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.5,"$1,202.50"
+17/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,5.5,$372.68
+17/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.0,$785.00
+17/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.5,"$1,560.00"
+17/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+17/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,5.5,"$1,500.40"
+17/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+17/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+17/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.0,"$1,099.00"
+17/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+17/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+17/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.0,$840.00
+17/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,202.50"
+17/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+17/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+17/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+17/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,5.0,$385.00
+17/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.0,$427.68
+17/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.0,$960.00
+17/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+17/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+17/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+17/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+17/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.5,$500.50
+17/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.5,$500.50
+17/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+18/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+18/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+18/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,7.0,$345.80
+18/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+18/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,5.5,$286.00
+18/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,8.0,"$1,480.00"
+18/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.0,$474.32
+18/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,099.00"
+18/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+18/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+18/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+18/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+18/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,7.5,"$1,800.00"
+18/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+18/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+18/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+18/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,8.0,"$1,120.00"
+18/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+18/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.5,$847.88
+18/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+18/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+18/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+18/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+18/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+18/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+18/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+18/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+18/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+18/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+18/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+21/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,7.0,$980.00
+21/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+21/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,8.0,"$1,406.00"
+21/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+21/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,4.5,$621.72
+21/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+21/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,5.5,"$1,017.50"
+21/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.0,$406.56
+21/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.0,$785.00
+21/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.0,"$1,200.00"
+21/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,4.0,$361.00
+21/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.0,"$1,091.20"
+21/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,596.00"
+21/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,7.0,"$1,680.00"
+21/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+21/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+21/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.0,$739.20
+21/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.0,$980.00
+21/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.0,$925.00
+21/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+21/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+21/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+21/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+21/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.5,$463.32
+21/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+21/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+21/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,7.0,$364.00
+21/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+21/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+21/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+21/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,8.0,$616.00
+21/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.5,$500.50
+21/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+22/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+22/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+22/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+22/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.0,$296.40
+22/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.5,$759.88
+22/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,8.0,$416.00
+22/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+22/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,5.0,$338.80
+22/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,8.0,"$1,256.00"
+22/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+22/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.0,$631.75
+22/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.5,"$1,227.60"
+22/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+22/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,200.00"
+22/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.0,$785.00
+22/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+22/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+22/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+22/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.5,$734.82
+22/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.5,$617.50
+22/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+22/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.0,$539.00
+22/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,6.5,$463.32
+22/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,5.0,$616.00
+22/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+22/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+22/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,8.0,$616.00
+22/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+22/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+22/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+22/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.0,$539.00
+23/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+23/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+23/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,8.0,"$1,406.00"
+23/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,5.5,$759.88
+23/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.5,$390.00
+23/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+23/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+23/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,099.00"
+23/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.5,"$1,560.00"
+23/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+23/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.5,$954.80
+23/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,026.00"
+23/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.5,"$1,560.00"
+23/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,6.0,$942.00
+23/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.5,$532.95
+23/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+23/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.5,"$1,050.00"
+23/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,202.50"
+23/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+23/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.0,$665.00
+23/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+23/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+23/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+23/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+23/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+23/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+23/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+23/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+23/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,8.0,$616.00
+23/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.5,$577.50
+23/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.0,$539.00
+24/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+24/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+24/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+24/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+24/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,7.0,$364.00
+24/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+24/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,5.0,$338.80
+24/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,7.0,"$1,099.00"
+24/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+24/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+24/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+24/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,4.5,"$1,026.00"
+24/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,4.0,$960.00
+24/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.5,$863.50
+24/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+24/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+24/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.0,$840.00
+24/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+24/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,4.5,$508.72
+24/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,8.0,$760.00
+24/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+24/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,8.0,$616.00
+24/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+24/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+24/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.5,"$1,320.00"
+24/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+24/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+24/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+24/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+24/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.5,$577.50
+24/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,5.5,$423.50
+24/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,5.5,$423.50
+25/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.5,$910.00
+25/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+25/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,054.50"
+25/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+25/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.0,$312.00
+25/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,8.0,"$1,480.00"
+25/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.5,$508.20
+25/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,020.50"
+25/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.0,$960.00
+25/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,5.5,$496.38
+25/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+25/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+25/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.0,$581.40
+25/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+25/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,5.0,$700.00
+25/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,387.50"
+25/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+25/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+25/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,8.0,$760.00
+25/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.0,$462.00
+25/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,7.0,$498.96
+25/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+25/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,5.0,"$1,200.00"
+25/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+25/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,5.5,$423.50
+25/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+25/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.0,$462.00
+25/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,8.0,$616.00
+25/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,6.5,$500.50
+28/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,6.0,$840.00
+28/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+28/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+28/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,6.5,$321.10
+28/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.5,$898.04
+28/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.0,$312.00
+28/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,7.5,"$1,387.50"
+28/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,6.5,$440.44
+28/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,4.5,$706.50
+28/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,4.5,"$1,080.00"
+28/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,7.5,$676.88
+28/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,3.0,$818.40
+28/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,254.00"
+28/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+28/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.5,$863.50
+28/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,7.0,$678.30
+28/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+28/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,5.0,$700.00
+28/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,202.50"
+28/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,7.0,$791.35
+28/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+28/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,7.5,$712.50
+28/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,7.5,$577.50
+28/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+28/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,6.5,$800.80
+28/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,4.5,"$1,080.00"
+28/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.5,$338.00
+28/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,6.0,$739.20
+28/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,5.5,$423.50
+28/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+28/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,6.0,$462.00
+28/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,7.0,$539.00
+28/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.0,$539.00
+29/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+29/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,6.5,"$1,142.38"
+29/09/2026,Kabir Kim,Strategy,APAC,Senior Consultant,Fairhaven Council,8.0,6.0,$828.96
+29/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,6.5,$338.00
+29/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.0,"$1,110.00"
+29/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.0,$474.32
+29/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+29/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,6.0,"$1,440.00"
+29/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,5.0,$451.25
+29/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,4.5,"$1,227.60"
+29/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+29/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,6.0,"$1,440.00"
+29/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,5.0,$785.00
+29/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,5.0,$484.50
+29/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+29/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,6.5,$910.00
+29/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,6.0,"$1,110.00"
+29/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,6.0,$678.30
+29/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,7.5,$712.50
+29/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,5.5,$522.50
+29/09/2026,Zara Okafor,Cybersecurity,India,Consultant,Brightwell Health,8.0,6.5,$500.50
+29/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,5.5,$392.04
+29/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,7.0,$862.40
+29/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.0,"$1,440.00"
+29/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.0,$862.40
+29/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+29/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+29/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,5.5,$423.50
+29/09/2026,Zara Garcia,Cloud,India,Consultant,Harborview Insurance,8.0,6.0,$462.00
+29/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,8.0,$616.00
+30/09/2026,Amara Okafor,ERP,Europe,Consultant,Driftwood Manufacturing,8.0,8.0,"$1,120.00"
+30/09/2026,Emma Patel,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.0,$570.00
+30/09/2026,Liam Tanaka,Cybersecurity,Europe,Senior Consultant,Aldermoor Bank,8.0,7.5,"$1,318.12"
+30/09/2026,Kenji Okafor,Cloud,India,Analyst,Ironleaf Logistics,8.0,8.0,$395.20
+30/09/2026,Noah Tanaka,ERP,India,Analyst,Juniper Pharma,8.0,5.5,$286.00
+30/09/2026,Kenji Reddy,Cybersecurity,North America,Senior Consultant,Brightwell Health,8.0,6.5,"$1,202.50"
+30/09/2026,Ananya Mehta,Data & AI,India,Consultant,Cobalt Retail,8.0,7.0,$474.32
+30/09/2026,Liam Rossi,Data & AI,APAC,Senior Consultant,Aldermoor Bank,8.0,5.5,$863.50
+30/09/2026,Zara Reddy,ERP,North America,Manager,Driftwood Manufacturing,8.0,5.5,"$1,320.00"
+30/09/2026,Amara Kim,Cybersecurity,North America,Analyst,Aldermoor Bank,8.0,6.5,$586.62
+30/09/2026,Kenji Dubois,Strategy,Europe,Director,Fairhaven Council,8.0,2.5,$682.00
+30/09/2026,Emma Rossi,Cybersecurity,North America,Manager,Aldermoor Bank,8.0,5.0,"$1,140.00"
+30/09/2026,Nina Tanaka,Data & AI,North America,Manager,Aldermoor Bank,8.0,5.5,"$1,320.00"
+30/09/2026,Sofia Tanaka,Strategy,APAC,Senior Consultant,Evergreen Energy,8.0,7.5,"$1,177.50"
+30/09/2026,Mateo Reddy,Cybersecurity,India,Senior Consultant,Aldermoor Bank,8.0,6.5,$629.85
+30/09/2026,Aarav Tanaka,Cloud,North America,Consultant,Lumen Utilities,8.0,7.5,$924.00
+30/09/2026,Nina Walsh,Data & AI,North America,Consultant,Aldermoor Bank,8.0,7.5,"$1,050.00"
+30/09/2026,Rohan Dubois,Data & AI,North America,Senior Consultant,Aldermoor Bank,8.0,5.5,"$1,017.50"
+30/09/2026,Nina Silva,Cybersecurity,APAC,Consultant,Aldermoor Bank,8.0,8.0,$904.40
+30/09/2026,Zara Patel,Strategy,Europe,Analyst,Evergreen Energy,8.0,6.0,$570.00
+30/09/2026,Nina Khan,ERP,Europe,Analyst,Driftwood Manufacturing,8.0,6.5,$617.50
+30/09/2026,Zara Silva,Data & AI,APAC,Analyst,Cobalt Retail,8.0,8.0,$570.24
+30/09/2026,Kenji Chen,Cloud,North America,Consultant,Lumen Utilities,8.0,8.0,$985.60
+30/09/2026,Maya Lee,Strategy,North America,Manager,Evergreen Energy,8.0,6.5,"$1,560.00"
+30/09/2026,Maya Silva,Data & AI,India,Analyst,Aldermoor Bank,8.0,6.0,$312.00
+30/09/2026,Aarav Iyer,Strategy,North America,Consultant,Fairhaven Council,8.0,7.5,$924.00
+30/09/2026,Kenji Silva,Cloud,India,Consultant,Granite Telecom,8.0,6.0,$462.00
+30/09/2026,Isla Lee,Data & AI,India,Consultant,Bench,8.0,0.0,$0.00
+30/09/2026,Lucas Nguyen,Cloud,India,Consultant,Granite Telecom,8.0,7.0,$539.00
+30/09/2026,Liam Mehta,Data & AI,India,Consultant,Aldermoor Bank,8.0,7.0,$539.00
