@@ -2,14 +2,9 @@
 
 ## 1. Repository and project hygiene
 
-- **Give it its own repository.** Today it lives in `conversational-bi/` on its own branch so it can be lifted out
-  cleanly with its history:
-  ```bash
-  git subtree split --prefix=conversational-bi -b conversational-bi-standalone
-  # then push that branch to a new, empty GitHub repo as its main branch
-  ```
-- **Keep it self-contained:** no imports from or into the profile site, its own README, tests, run script and
-  dependency file. That is already true.
+- **Its own repository (done).** This project was split out of the personal-site repo with its history
+  intact (`git subtree split`). Keep it independent: no shared code with other projects.
+- **Keep it self-contained:** its own README, tests, run script and dependency file.
 - **Use trunk-based development** with short feature branches, PRs and CI that runs the tests and a linter (ruff)
   on every push.
 - **Version the semantic model like code.** Changes to metric definitions go through PR review, because a changed
