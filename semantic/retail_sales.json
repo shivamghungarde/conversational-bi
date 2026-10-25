@@ -1,0 +1,156 @@
+{
+  "name": "retail_sales",
+  "label": "Retail Sales",
+  "description": "Orders placed across regions, channels, product categories and customer segments.",
+  "base_table": "orders",
+  "base_alias": "o",
+  "joins": {
+    "products": { "table": "products", "alias": "p", "on": "o.product_id = p.product_id" },
+    "customers": { "table": "customers", "alias": "c", "on": "o.customer_id = c.customer_id" }
+  },
+  "time_dimension": {
+    "name": "order_date",
+    "label": "Order date",
+    "sql": "o.order_date",
+    "default_grain": "month"
+  },
+  "metrics": [
+    {
+      "name": "revenue",
+      "label": "Revenue",
+      "sql": "SUM(o.revenue)",
+      "format": "currency",
+      "additive": true,
+      "description": "Net sales after discounts.",
+      "synonyms": ["revenue", "sales", "net sales", "turnover", "income", "top line", "money", "earnings"]
+    },
+    {
+      "name": "gross_profit",
+      "label": "Gross profit",
+      "sql": "SUM(o.revenue - o.cost)",
+      "format": "currency",
+      "additive": true,
+      "description": "Revenue minus cost of goods sold.",
+      "synonyms": ["gross profit", "profit", "profits", "gp", "contribution"]
+    },
+    {
+      "name": "margin_pct",
+      "label": "Gross margin",
+      "sql": "SUM(o.revenue - o.cost) * 1.0 / NULLIF(SUM(o.revenue), 0)",
+      "format": "percent",
+      "additive": false,
+      "description": "Gross profit as a share of revenue.",
+      "synonyms": ["margin", "margins", "gross margin", "profit margin", "margin %", "margin percent"]
+    },
+    {
+      "name": "orders",
+      "label": "Orders",
+      "sql": "COUNT(DISTINCT o.order_id)",
+      "format": "number",
+      "additive": true,
+      "description": "Number of distinct orders.",
+      "synonyms": ["orders", "order count", "number of orders", "transactions", "purchases", "deals"]
+    },
+    {
+      "name": "units",
+      "label": "Units sold",
+      "sql": "SUM(o.quantity)",
+      "format": "number",
+      "additive": true,
+      "description": "Total quantity of items sold.",
+      "synonyms": ["units", "units sold", "quantity", "volume", "items sold", "items"]
+    },
+    {
+      "name": "aov",
+      "label": "Average order value",
+      "sql": "SUM(o.revenue) * 1.0 / NULLIF(COUNT(DISTINCT o.order_id), 0)",
+      "format": "currency",
+      "additive": false,
+      "description": "Revenue divided by number of orders.",
+      "synonyms": ["average order value", "aov", "avg order value", "basket size", "average basket", "ticket size"]
+    },
+    {
+      "name": "active_customers",
+      "label": "Active customers",
+      "sql": "COUNT(DISTINCT o.customer_id)",
+      "format": "number",
+      "additive": false,
+      "description": "Distinct customers who placed at least one order.",
+      "synonyms": ["active customers", "customers", "customer count", "number of customers", "buyers", "shoppers", "clients"]
+    },
+    {
+      "name": "return_rate",
+      "label": "Return rate",
+      "sql": "AVG(o.returned * 1.0)",
+      "format": "percent",
+      "additive": false,
+      "description": "Share of orders that were returned.",
+      "synonyms": ["return rate", "returns", "returned", "refund rate", "refunds"]
+    },
+    {
+      "name": "avg_discount",
+      "label": "Average discount",
+      "sql": "AVG(o.discount)",
+      "format": "percent",
+      "additive": false,
+      "description": "Average discount rate applied to orders.",
+      "synonyms": ["average discount", "discount", "discounts", "discount rate", "promo depth"]
+    }
+  ],
+  "dimensions": [
+    {
+      "name": "region",
+      "label": "Region",
+      "plural": "regions",
+      "sql": "o.region",
+      "join": null,
+      "synonyms": ["region", "regions", "territory", "territories", "area", "areas", "geography", "geo"]
+    },
+    {
+      "name": "channel",
+      "label": "Channel",
+      "plural": "channels",
+      "sql": "o.channel",
+      "join": null,
+      "synonyms": ["channel", "channels", "sales channel", "sales channels"]
+    },
+    {
+      "name": "category",
+      "label": "Category",
+      "plural": "categories",
+      "sql": "p.category",
+      "join": "products",
+      "synonyms": ["category", "categories", "product category", "product categories", "product line", "product lines", "department", "departments"]
+    },
+    {
+      "name": "product",
+      "label": "Product",
+      "plural": "products",
+      "sql": "p.product_name",
+      "join": "products",
+      "synonyms": ["product", "products", "item", "sku", "skus"]
+    },
+    {
+      "name": "segment",
+      "label": "Customer segment",
+      "plural": "segments",
+      "sql": "c.segment",
+      "join": "customers",
+      "synonyms": ["segment", "segments", "customer segment", "customer segments", "customer type", "customer types"]
+    }
+  ],
+  "sample_queries": [
+    "What was revenue last quarter?",
+    "Revenue by region this year",
+    "Top 5 products by gross profit",
+    "Monthly revenue trend over the last 12 months",
+    "How did revenue compare to last year?",
+    "Gross margin by category",
+    "Average order value by channel last month",
+    "Which region had the highest return rate?",
+    "Orders by customer segment in 2025",
+    "Revenue for Electronics by region, excluding Partner",
+    "Quarterly units sold for Online",
+    "Active customers by segment year to date"
+  ]
+}

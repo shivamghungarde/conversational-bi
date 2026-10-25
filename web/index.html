@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ask Your Data</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo" aria-hidden="true">◆</span> Ask Your Data</div>
+    <div class="meta">
+      <span id="model-label" class="pill">Loading model…</span>
+      <span id="engine-label" class="pill subtle"></span>
+      <button id="glossary-btn" class="link-btn" type="button">What can I ask?</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="ask">
+      <form id="ask-form" autocomplete="off">
+        <label for="question" class="sr-only">Ask a question about your data</label>
+        <input id="question" name="question" type="text" maxlength="500" placeholder="Ask anything about your data…">
+        <button type="submit" id="ask-btn">Ask</button>
+      </form>
+      <div class="hint">Plain English works. Ask a follow-up like <em>“now by channel”</em> or <em>“what about last year?”</em></div>
+      <div id="samples" class="samples" aria-label="Sample questions"></div>
+    </section>
+
+    <dialog id="glossary">
+      <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+      <h2>What you can ask about</h2>
+      <div id="glossary-body"></div>
+    </dialog>
+
+    <section id="thread" class="thread" aria-live="polite"></section>
+  </main>
+
+  <template id="card-tpl">
+    <article class="card">
+      <div class="card-head">
+        <div class="q"></div>
+        <div class="stats"></div>
+      </div>
+      <p class="answer"></p>
+      <div class="notes"></div>
+      <div class="chips"></div>
+      <div class="controls">
+        <label>Break down by <select data-ctl="dimension"></select></label>
+        <label>Over time <select data-ctl="grain"></select></label>
+        <label>Add metric <select data-ctl="metric"></select></label>
+        <label>Compare <select data-ctl="compare"></select></label>
+      </div>
+      <div class="viz"></div>
+      <div class="suggestions"></div>
+      <details class="table-wrap" open>
+        <summary>Result set <span class="rowcount"></span> <button type="button" class="link-btn csv">Download CSV</button></summary>
+        <div class="table-scroll"><table></table></div>
+      </details>
+      <details class="sql-wrap">
+        <summary>How this was calculated</summary>
+        <pre class="sql"></pre>
+      </details>
+    </article>
+  </template>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>
