@@ -242,10 +242,15 @@ class RuleParser:
             text = text.replace(span, " ", 1)
 
         # 0. "why / what drove" questions ask for driver analysis
-        explain = bool(EXPLAIN_PATTERN.search(text))
+        # Ignore "why" words that are part of a breakdown's name ("return reason", "reason for return").
+        probe = text
+        for _, _, rx in self.dimension_terms:
+            probe = rx.sub(" ", probe)
+        why = EXPLAIN_PATTERN.search(probe)
+        explain = bool(why)
         claimed = "down" if DOWN_WORDS.search(text) else ("up" if UP_WORDS.search(text) else None)
         if explain:
-            consume(EXPLAIN_PATTERN.search(text).group(0))
+            consume(why.group(0))
             score += 0.5
 
         # 1. comparison ("vs last year") before time, so "last year" isn't read as the range.
@@ -273,13 +278,13 @@ class RuleParser:
 
         # 3. time grain
         grain = None
-        for pattern, g in GRAIN_PATTERNS:
+        for pattern, g in GRAIN_PATTERNS:  # consume every time word: "monthly sales trend" uses "monthly" and "trend"
             m = re.search(pattern, text)
             if m:
-                grain = g
+                if grain is None:  # explicit grains come before "trend" in the list, so they win
+                    grain = g
+                    score += 1
                 consume(m.group(0))
-                score += 1
-                break
 
         # 4. top / bottom N
         limit, order_dir, wants_rank = None, "desc", False
@@ -414,7 +419,9 @@ class RuleParser:
         matched = {"metrics": metrics, "dimensions": dims, "filters": [f.__dict__ for f in filters.values()],
                    "time": time_range.label if time_range else None, "grain": grain, "compare": compare,
                    "explain": explain}
-        leftovers = [w for w in text.split() if len(w) > 2 and w not in STOPWORDS]
+        leftovers = [w for w in text.split() if w not in STOPWORDS and (len(w) > 2 or w.isdigit())]
+        if leftovers and (metrics or dims or filters) and not ambiguities:
+            ambiguities.append({"kind": "constraint", "term": " ".join(leftovers)[:120]})
         confidence = min(1.0, score / 3.0) * (0.6 if len(leftovers) > 3 else 1.0)
         if (not metrics and not dims and not filters and not time_range and not is_follow_up and not explain
                 and not any(a["kind"] == "metric" and a["term"] for a in ambiguities)):

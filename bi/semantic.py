@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
+import copy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
+from decimal import Decimal
 
 GRAINS = ("day", "week", "month", "quarter", "year")
 FILTER_OPS = ("in", "not_in")
@@ -55,20 +58,46 @@ class SemanticQuery:
 
     @classmethod
     def from_dict(cls, d: dict) -> "SemanticQuery":
-        d = dict(d or {})
+        if not isinstance(d, dict):
+            raise QueryError("Query must be an object.")
+        unknown = set(d) - set(cls.__dataclass_fields__)
+        if unknown:
+            raise QueryError("Unknown query fields: " + ", ".join(sorted(unknown)))
+        def names(key, maximum):
+            values = d.get(key, [])
+            if not isinstance(values, list) or len(values) > maximum or any(not isinstance(v, str) for v in values):
+                raise QueryError(f"{key} must be a list of at most {maximum} names.")
+            return values
+        filters = d.get("filters", [])
+        if not isinstance(filters, list) or len(filters) > 20:
+            raise QueryError("At most 20 filters are allowed.")
+        parsed = []
+        for f in filters:
+            if not isinstance(f, dict) or set(f) - {"dimension", "op", "values"} or not isinstance(f.get("dimension"), str):
+                raise QueryError("Each filter needs a dimension and a list of values.")
+            values = f.get("values", [])
+            if (not isinstance(values, list) or not 1 <= len(values) <= 1000
+                    or any(not isinstance(v, (str, int, float)) or isinstance(v, bool) for v in values)):
+                raise QueryError("Filter values must contain 1–1000 scalar values.")
+            parsed.append(Filter(f["dimension"], f.get("op", "in"), values))
         tr = d.get("time_range")
-        return cls(
-            metrics=list(d.get("metrics") or []),
-            dimensions=list(d.get("dimensions") or []),
-            filters=[f if isinstance(f, Filter) else Filter(**f) for f in d.get("filters") or []],
-            time_range=TimeRange(**tr) if isinstance(tr, dict) else tr,
-            time_grain=d.get("time_grain"),
-            compare=d.get("compare"),
-            order_by=d.get("order_by"),
-            order_dir=d.get("order_dir") or "desc",
-            limit=d.get("limit"),
-            explain=bool(d.get("explain")),
-        )
+        if tr is not None:
+            if not isinstance(tr, dict) or set(tr) - {"start", "end", "label"} or not all(isinstance(tr.get(k), str) for k in ("start", "end")):
+                raise QueryError("time_range needs start and end dates.")
+            if not isinstance(tr.get("label", ""), str):
+                raise QueryError("Period label must be text.")
+            tr = TimeRange(**tr)
+        for key in ("time_grain", "compare", "order_by", "order_dir"):
+            if d.get(key) is not None and not isinstance(d[key], str):
+                raise QueryError(f"{key} must be text.")
+        if "explain" in d and not isinstance(d["explain"], bool):
+            raise QueryError("explain must be true or false.")
+        if d.get("limit") is not None and (not isinstance(d["limit"], int) or isinstance(d["limit"], bool)):
+            raise QueryError("limit must be an integer.")
+        return cls(metrics=names("metrics", 20), dimensions=names("dimensions", 8), filters=parsed,
+                   time_range=tr, time_grain=d.get("time_grain"), compare=d.get("compare"),
+                   order_by=d.get("order_by"), order_dir=d.get("order_dir") or "desc",
+                   limit=d.get("limit"), explain=d.get("explain", False))
 
 
 class Dialect:
@@ -83,7 +112,7 @@ class Dialect:
     def grain(self, col: str, grain: str) -> str:
         return {
             "day": f"substr({col}, 1, 10)",
-            "week": f"strftime('%Y-W%W', {col})",
+            "week": f"strftime('%Y', date({col}, '-3 days', 'weekday 4')) || '-W' || printf('%02d', (CAST(strftime('%j', date({col}, '-3 days', 'weekday 4')) AS INTEGER) - 1) / 7 + 1)",
             "month": f"strftime('%Y-%m', {col})",
             "quarter": f"strftime('%Y', {col}) || '-Q' || ((CAST(strftime('%m', {col}) AS INTEGER) + 2) / 3)",
             "year": f"strftime('%Y', {col})",
@@ -112,6 +141,12 @@ DIALECTS = {"sqlite": Dialect(), "postgres": PostgresDialect()}
 
 class SemanticModel:
     def __init__(self, spec: dict, dialect: Dialect | None = None):
+        for group in ("metrics", "dimensions"):
+            names = [x.get("name") for x in spec.get(group, [])]
+            if len(names) != len(set(names)) or any(not isinstance(n, str) or not re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_]*", n) for n in names):
+                raise QueryError(f"{group} names must be unique SQL identifiers.")
+        if set(x["name"] for x in spec.get("metrics", [])) & set(x["name"] for x in spec.get("dimensions", [])):
+            raise QueryError("Metric and dimension names must be distinct.")
         self.spec = spec
         self.name = spec["name"]
         self.label = spec.get("label", self.name)
@@ -123,6 +158,15 @@ class SemanticModel:
         self.ambiguous_terms = spec.get("ambiguous_terms", {})
         self.featured_metrics = spec.get("featured_metrics") or list(self.metrics)[:4]
         self.dialect = dialect or DIALECTS["sqlite"]
+        for name in self.joins:
+            self._with_requirements({name})
+        for m in self.metrics.values():
+            if m.get("ratio") and any(n not in self.metrics for n in m["ratio"].values()):
+                raise QueryError("Ratio references an unknown metric.")
+            if any(j not in self.joins for j in m.get("joins", [])):
+                raise QueryError("Metric references an unknown join.")
+        if any(d.get("join") and d["join"] not in self.joins for d in self.dimensions.values()):
+            raise QueryError("Dimension references an unknown join.")
 
     @classmethod
     def load(cls, path: Path, dialect: Dialect | None = None) -> "SemanticModel":
@@ -149,6 +193,8 @@ class SemanticModel:
     # ---- validation -------------------------------------------------------
 
     def validate(self, q: SemanticQuery) -> SemanticQuery:
+        if not isinstance(q, SemanticQuery):
+            raise QueryError("Expected a SemanticQuery.")
         if not q.metrics:
             raise QueryError("Pick at least one metric.")
         for m in q.metrics:
@@ -166,8 +212,8 @@ class SemanticModel:
                 raise QueryError(f"Unsupported filter operator '{f.op}'.")
             if not f.values:
                 raise QueryError(f"Filter on '{f.dimension}' needs at least one value.")
-        if not self.time:
-            q.time_range, q.time_grain, q.compare = None, None, None
+        if not self.time and (q.time_range or q.time_grain or q.compare or q.explain):
+            raise QueryError("This source has no date field. Choose a source with dates or remove the period.")
         if q.time_grain is not None and q.time_grain not in GRAINS:
             raise QueryError(f"Unknown time grain '{q.time_grain}'.")
         if q.compare is not None:
@@ -180,6 +226,11 @@ class SemanticModel:
         if q.time_range:
             for v in (q.time_range.start, q.time_range.end):
                 dt.date.fromisoformat(v)
+            start, end = dt.date.fromisoformat(q.time_range.start), dt.date.fromisoformat(q.time_range.end)
+            if start >= end:
+                raise QueryError("Time range start must be before its end.")
+            if (end - start).days > 366 * 200:
+                raise QueryError("Time range exceeds 200 years.")
         if q.order_dir not in ("asc", "desc"):
             raise QueryError("order_dir must be 'asc' or 'desc'.")
         valid_order = set(q.metrics) | set(q.dimensions) | {"period"}
@@ -194,13 +245,18 @@ class SemanticModel:
     def _with_requirements(self, joins: set) -> list:
         """Order joins so a join's prerequisite (e.g. projects before clients) comes first."""
         ordered: list = []
+        visiting = set()
 
         def add(name: str):
+            if name not in self.joins or name in visiting:
+                raise QueryError("Unknown or cyclic join dependency.")
             if name in ordered:
                 return
+            visiting.add(name)
             req = self.joins[name].get("requires")
             if req:
                 add(req)
+            visiting.remove(name)
             ordered.append(name)
 
         for j in sorted(joins):
@@ -208,7 +264,7 @@ class SemanticModel:
         return ordered
 
     def compile(self, q: SemanticQuery, time_range: TimeRange | None = None,
-                with_dimensions: bool = True, extra_metrics: tuple = ()) -> tuple:
+                with_dimensions: bool = True, extra_metrics: tuple = (), apply_limit: bool = True) -> tuple:
         """Return (sql, params, columns). `time_range` overrides q.time_range (for comparisons)."""
         q = self.validate(q)
         tr = time_range or q.time_range
@@ -218,17 +274,17 @@ class SemanticModel:
 
         select, columns, joins = [], [], set()
         if grain:
-            select.append(f"{self.dialect.grain(self.time['sql'], grain)} AS period")
+            select.append(f'{self.dialect.grain(self.time["sql"], grain)} AS "period"')
             columns.append("period")
         for d in dims:
             dim = self.dimensions[d]
-            select.append(f"{dim['sql']} AS {d}")
+            select.append(f'{dim["sql"]} AS "{d}"')  # quoted: a column may be called "select" or "order"
             columns.append(d)
             if dim.get("join"):
                 joins.add(dim["join"])
         group = list(range(1, len(columns) + 1))
         for m in metrics:
-            select.append(f"{self.metrics[m]['sql']} AS {m}")
+            select.append(f'{self.metrics[m]["sql"]} AS "{m}"')
             columns.append(m)
             for j in self.metrics[m].get("joins", []):
                 joins.add(j)
@@ -261,12 +317,13 @@ class SemanticModel:
                 order_col, direction = "period", "asc"
             else:
                 order_col, direction = metrics[0], "desc"
-            order = f"{order_col} {direction.upper()}"
+            order = f'"{order_col}" {direction.upper()}'
             if grain and order_col != "period":
-                order += ", period ASC"
+                order += ', "period" ASC'
             sql += f"\nORDER BY {order}"
             limit = q.limit or (MAX_LIMIT if grain else 100)
-            sql += f"\nLIMIT {int(limit)}"
+            if apply_limit:
+                sql += f"\nLIMIT {int(limit)}"
         return sql, params, columns
 
 
@@ -295,7 +352,7 @@ def shift_range(tr: TimeRange, compare: str) -> TimeRange:
         elif "quarter" in tr.label.lower():
             y, m = divmod(start.year * 12 + start.month - 4, 12)
             prev_start = dt.date(y, m + 1, 1)
-        return TimeRange(prev_start.isoformat(), (prev_start + dt.timedelta(days=days)).isoformat(),
+        return TimeRange(prev_start.isoformat(), min(prev_start + dt.timedelta(days=days), start).isoformat(),
                          "same days of the previous period")
     length = end - start
     return TimeRange((start - length).isoformat(), tr.start, "previous period")
@@ -327,44 +384,51 @@ def change(model: SemanticModel, metric: str, cur: Any, prev: Any):
 
 
 def run(model: SemanticModel, con, q: SemanticQuery) -> dict:
-    """Execute a SemanticQuery. Returns columns, rows, totals and the SQL that ran."""
+    """Execute bounded output with comparisons joined before the display limit."""
     q = model.validate(q)
     sql, params, columns = model.compile(q)
-    rows = [dict(zip(columns, r)) for r in con.execute(sql, params).fetchall()]
+    cap = q.limit or (MAX_LIMIT if q.time_grain else 100)
+    grouped = bool(q.dimensions or q.time_grain)
+    if grouped:
+        sql = sql.rsplit("LIMIT ", 1)[0] + f"LIMIT {cap + 1}"
     statements = [{"sql": sql, "params": params}]
+    rows = [dict(zip(columns, [float(v) if isinstance(v, Decimal) else v for v in r])) for r in con.execute(sql, params).fetchall()]
+    truncated = grouped and len(rows) > cap
+    rows = rows[:cap] if grouped else rows
+    totals = dict(rows[0]) if rows and not grouped else None
+    if grouped:
+        tsql, tp, tc = model.compile(q, with_dimensions=False)
+        totals = dict(zip(tc, [float(v) if isinstance(v, Decimal) else v for v in con.execute(tsql, tp).fetchone()]))
+        statements.append({"sql": tsql, "params": tp})
     compare_range = None
-
-    totals = None
-    if q.dimensions or q.time_grain:
-        tsql, tparams, tcols = model.compile(q, with_dimensions=False)
-        totals = dict(zip(tcols, con.execute(tsql, tparams).fetchone()))
-    elif rows:
-        totals = dict(rows[0])
-
     if q.compare and q.time_range and not q.time_grain:
-        prev_range = shift_range(q.time_range, q.compare)
-        psql, pparams, _ = model.compile(q, time_range=prev_range)
-        prev_rows = [dict(zip(columns, r)) for r in con.execute(psql, pparams).fetchall()]
-        statements.append({"sql": psql, "params": pparams})
+        prev = shift_range(q.time_range, q.compare)
+        psql, pp, pc = model.compile(q, time_range=prev, apply_limit=False)
+        if q.dimensions:
+            # Match prior values only for the currently displayed keys. The prior aggregate is never top-N limited.
+            keys = " AND ".join(f'(p."{d}" = c."{d}" OR (p."{d}" IS NULL AND c."{d}" IS NULL))' for d in q.dimensions)
+            projection = ", ".join(f'p."{x}"' for x in pc)
+            psql = f"WITH p AS ({psql}), c AS ({sql}) SELECT {projection} FROM p JOIN c ON {keys}"
+            pp = pp + params
+        prior = [dict(zip(pc, [float(v) if isinstance(v, Decimal) else v for v in r])) for r in con.execute(psql, pp).fetchall()]
+        statements.append({"sql": psql, "params": pp})
         key = lambda r: tuple(r[d] for d in q.dimensions)
-        prev_by_key = {key(r): r for r in prev_rows}
+        by_key = {key(r): r for r in prior}
         for r in rows:
-            p = prev_by_key.get(key(r), {})
+            p = by_key.get(key(r), {})
             for m in q.metrics:
                 r[f"{m}__prev"] = p.get(m)
                 r[f"{m}__change"] = change(model, m, r[m], p.get(m))
         for m in q.metrics:
             columns += [f"{m}__prev", f"{m}__change"]
-        if q.dimensions:
-            tsql, tparams, tcols = model.compile(q, time_range=prev_range, with_dimensions=False)
-            ptotals = dict(zip(tcols, con.execute(tsql, tparams).fetchone()))
-        else:
-            ptotals = prev_rows[0] if prev_rows else {}
+        tsql, tp, tc = model.compile(q, time_range=prev, with_dimensions=False)
+        pt = dict(zip(tc, [float(v) if isinstance(v, Decimal) else v for v in con.execute(tsql, tp).fetchone()]))
+        statements.append({"sql": tsql, "params": tp})
         if totals is not None:
             for m in q.metrics:
-                totals[f"{m}__prev"] = ptotals.get(m)
-                totals[f"{m}__change"] = change(model, m, totals.get(m), ptotals.get(m))
-        compare_range = asdict(prev_range)
-
+                totals[f"{m}__prev"] = pt.get(m)
+                totals[f"{m}__change"] = change(model, m, totals.get(m), pt.get(m))
+        compare_range = asdict(prev)
     return {"columns": columns, "rows": rows, "totals": totals, "sql": statements,
-            "compare_range": compare_range}
+            "compare_range": compare_range, "truncated": truncated,
+            "comparison_policy": "Current-period ranking; prior values for the same groups." if q.compare else None}

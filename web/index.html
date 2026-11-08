@@ -17,7 +17,7 @@
         <path d="M13 15.9c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5"/>
         <path d="M12.6 23.2h6.8M14.2 26h3.6"/>
       </svg>
-      Ask Your Data
+      Ask Your Data <span class="demo-label">Synthetic demo</span>
     </div>
     <div class="meta">
       <button id="sources-btn" class="sources-btn" type="button" title="Connected data sources">
@@ -43,7 +43,7 @@
       <input id="question" name="question" type="text" maxlength="500" placeholder="Ask anything about your data…">
       <button type="submit" id="ask-btn" aria-label="Ask">Ask</button>
     </form>
-    <div class="composer-hint">Press <kbd>Tab</kbd> to use the suggestion · answers come from your data, on this machine</div>
+    <div class="composer-hint">Press <kbd>Alt + Enter</kbd> to use the suggestion · answers come from your data, on this machine</div>
   </footer>
 
   <dialog id="help">
@@ -58,7 +58,8 @@
     <p class="dialog-sub">Choose <b>All sources</b> in the question bar to let each question find its source, or pick one to focus.</p>
     <div id="sources-list" class="sources-list"></div>
     <div class="help-upload">
-      <button id="upload-btn" class="soft-btn" type="button">Add a CSV or Excel file</button>
+      <label class="synthetic-confirm"><input id="synthetic-confirm" type="checkbox"> This file contains synthetic data only</label>
+      <button id="upload-btn" class="soft-btn" type="button" disabled>Add a CSV or Excel file</button>
       <input id="upload" type="file" accept=".csv,.xlsx" hidden>
     </div>
   </dialog>

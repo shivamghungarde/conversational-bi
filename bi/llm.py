@@ -4,7 +4,7 @@ Questions must not leave the network, so this only talks to a self-hosted,
 OpenAI-compatible chat endpoint (Ollama, vLLM, LM Studio, llama.cpp server)
 and refuses any endpoint that doesn't resolve to a loopback or private address.
 
-The model never sees data and never writes SQL. It fills in a JSON
+The model sees bounded dimension value candidates (which may contain business names), but never raw fact rows and never writes SQL. It fills in a JSON
 SemanticQuery whose metric/dimension names are constrained by JSON-schema enums,
 and the result goes through the same validator as everything else.
 
@@ -20,22 +20,57 @@ import json
 import os
 import socket
 import urllib.request
+import http.client
 from urllib.parse import urlparse
 
 from .semantic import GRAINS, SemanticModel, SemanticQuery
 
 
-def is_on_premises(url: str) -> bool:
-    """True only if every address the host resolves to is loopback, private or link-local."""
-    host = urlparse(url).hostname
-    if not host:
-        return False
+def _addresses(url):
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username or parsed.password:
+        return []
     try:
-        infos = socket.getaddrinfo(host, None)
-    except socket.gaierror:
-        return False
-    addrs = {ipaddress.ip_address(i[4][0].split("%")[0]) for i in infos}
-    return bool(addrs) and all(a.is_loopback or a.is_private or a.is_link_local for a in addrs)
+        addrs = {ipaddress.ip_address(i[4][0].split("%")[0]) for i in socket.getaddrinfo(parsed.hostname, parsed.port or 80)}
+    except (OSError, ValueError):
+        return []
+    networks = [ipaddress.ip_network(n) for n in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7")]
+    return list(addrs) if addrs and all(a.is_loopback or any(a in n for n in networks if n.version == a.version) for a in addrs) else []
+
+
+def is_on_premises(url: str) -> bool:
+    return bool(_addresses(url))
+
+
+class _PinnedHTTP(http.client.HTTPConnection):
+    def connect(self):
+        host = f"[{self.host}]" if ":" in self.host else self.host
+        addresses = _addresses(f"http://{host}:{self.port}")
+        if not addresses:
+            raise ValueError("LLM address is no longer on an approved private network.")
+        # Connect to the validated numeric IP: no second DNS resolution.
+        self.sock = socket.create_connection((str(addresses[0]), self.port), self.timeout)
+
+
+class _PinnedHTTPS(http.client.HTTPSConnection):
+    def connect(self):
+        _PinnedHTTP.connect(self)
+        self.sock = self._context.wrap_socket(self.sock, server_hostname=self.host)
+
+
+class _HTTPHandler(urllib.request.HTTPHandler):
+    def http_open(self, req):
+        return self.do_open(_PinnedHTTP, req)
+
+
+class _HTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, req):
+        return self.do_open(_PinnedHTTPS, req, context=self._context)
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        raise ValueError("Redirects are disabled for the local LLM endpoint.")
 
 
 def _schema(model: SemanticModel) -> dict:
@@ -105,6 +140,8 @@ class LocalInterpreter:
                   today: dt.date | None = None) -> tuple:
         """Return (SemanticQuery | None, message). None means 'not answerable'."""
         today = today or dt.date.today()
+        if not is_on_premises(self.url):
+            raise ValueError("LLM endpoint is not private.")
         user = f"Today: {today.isoformat()}\n"
         if context is not None:
             user += f"Previous query: {json.dumps(context.to_dict())}\n"
@@ -112,14 +149,19 @@ class LocalInterpreter:
         body = {
             "model": self.model_name,
             "temperature": 0,
+            "max_tokens": 768,
             "messages": [{"role": "system", "content": self.system}, {"role": "user", "content": user}],
             "response_format": {"type": "json_schema",
                                 "json_schema": {"name": "semantic_query", "schema": self.schema}},
         }
         req = urllib.request.Request(f"{self.url}/v1/chat/completions", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(json.loads(resp.read())["choices"][0]["message"]["content"])
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _HTTPHandler(), _HTTPSHandler(), _NoRedirect())
+        with opener.open(req, timeout=15) as resp:
+            raw = resp.read(1024 * 1024 + 1)
+            if len(raw) > 1024 * 1024:
+                raise ValueError("LLM response exceeds its size limit.")
+            data = json.loads(json.loads(raw)["choices"][0]["message"]["content"])
         if not data.pop("answerable", True):
             return None, data.get("reason") or "That isn't something the data model covers yet."
         data.pop("reason", None)

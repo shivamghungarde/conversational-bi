@@ -1,0 +1,451 @@
+{
+  "name": "superstore",
+  "label": "Superstore Retail",
+  "description": "Fictional US retail orders 2018-2021: sales, profit, margin, discounts and returns by region, segment, category and product.",
+  "base_table": "orders",
+  "base_alias": "o",
+  "joins": {
+    "returns": {
+      "table": "returns",
+      "alias": "r",
+      "on": "o.order_id = r.order_id",
+      "type": "left"
+    }
+  },
+  "time_dimension": {
+    "name": "order_date",
+    "label": "Order date",
+    "sql": "o.order_date",
+    "default_grain": "month",
+    "freshness_sql": "SELECT built_at FROM snapshot"
+  },
+  "featured_metrics": [
+    "sales",
+    "profit",
+    "profit_margin",
+    "return_rate"
+  ],
+  "metrics": [
+    {
+      "name": "sales",
+      "label": "Sales",
+      "sql": "SUM(o.sales)",
+      "format": "currency",
+      "additive": true,
+      "description": "Order line sales after discount.",
+      "synonyms": [
+        "sales",
+        "revenue",
+        "revenues",
+        "turnover",
+        "top line",
+        "gross sales"
+      ],
+      "explain_by": [
+        "region",
+        "segment",
+        "category",
+        "sub_category",
+        "ship_mode"
+      ]
+    },
+    {
+      "name": "profit",
+      "label": "Profit",
+      "sql": "SUM(o.profit)",
+      "format": "currency",
+      "additive": true,
+      "description": "Profit on each order line (can be negative when discounts are deep).",
+      "synonyms": [
+        "profit",
+        "profits",
+        "earnings",
+        "bottom line",
+        "net profit"
+      ],
+      "explain_by": [
+        "region",
+        "segment",
+        "category",
+        "sub_category",
+        "ship_mode"
+      ]
+    },
+    {
+      "name": "profit_margin",
+      "label": "Profit margin",
+      "sql": "SUM(o.profit) * 1.0 / NULLIF(SUM(o.sales), 0)",
+      "format": "percent",
+      "additive": false,
+      "ratio": {
+        "numerator": "profit",
+        "denominator": "sales"
+      },
+      "description": "Profit as a share of sales.",
+      "synonyms": [
+        "profit margin",
+        "margin",
+        "margins",
+        "profit margins",
+        "margin %",
+        "profit ratio"
+      ],
+      "explain_by": [
+        "region",
+        "segment",
+        "category",
+        "sub_category",
+        "ship_mode"
+      ]
+    },
+    {
+      "name": "quantity",
+      "label": "Units sold",
+      "sql": "SUM(o.quantity)",
+      "format": "number",
+      "additive": true,
+      "description": "Items sold.",
+      "synonyms": [
+        "units",
+        "units sold",
+        "quantity",
+        "items sold",
+        "number of items"
+      ]
+    },
+    {
+      "name": "orders",
+      "label": "Orders",
+      "sql": "COUNT(DISTINCT o.order_id)",
+      "format": "number",
+      "additive": false,
+      "description": "Distinct orders (an order can have several lines).",
+      "synonyms": [
+        "orders",
+        "number of orders",
+        "order count",
+        "how many orders",
+        "transactions"
+      ]
+    },
+    {
+      "name": "customers",
+      "label": "Customer count",
+      "sql": "COUNT(DISTINCT o.customer_id)",
+      "format": "number",
+      "additive": false,
+      "description": "Distinct customers who ordered.",
+      "synonyms": [
+        "number of customers",
+        "customer count",
+        "how many customers",
+        "unique customers"
+      ]
+    },
+    {
+      "name": "avg_order_value",
+      "label": "Average order value",
+      "sql": "SUM(o.sales) * 1.0 / NULLIF(COUNT(DISTINCT o.order_id), 0)",
+      "format": "currency",
+      "additive": false,
+      "description": "Sales per order.",
+      "synonyms": [
+        "average order value",
+        "aov",
+        "avg order value",
+        "basket size",
+        "order value"
+      ]
+    },
+    {
+      "name": "avg_discount",
+      "label": "Average discount",
+      "sql": "AVG(o.discount)",
+      "format": "percent",
+      "additive": false,
+      "description": "Average discount rate per order line.",
+      "synonyms": [
+        "average discount",
+        "discount",
+        "discounts",
+        "discount rate",
+        "avg discount"
+      ]
+    },
+    {
+      "name": "returned_orders",
+      "label": "Returned orders",
+      "sql": "COUNT(DISTINCT CASE WHEN r.order_id IS NOT NULL THEN o.order_id END)",
+      "format": "number",
+      "additive": false,
+      "joins": [
+        "returns"
+      ],
+      "description": "Distinct orders that were returned.",
+      "synonyms": [
+        "returned orders",
+        "number of returns",
+        "orders returned",
+        "how many returns"
+      ]
+    },
+    {
+      "name": "return_rate",
+      "label": "Return rate",
+      "sql": "COUNT(DISTINCT CASE WHEN r.order_id IS NOT NULL THEN o.order_id END) * 1.0 / NULLIF(COUNT(DISTINCT o.order_id), 0)",
+      "format": "percent",
+      "additive": false,
+      "joins": [
+        "returns"
+      ],
+      "description": "Share of orders that were returned (counted per order, not per line). Explained only by order-level groups (region, segment, ship mode, state), where it splits exactly.",
+      "synonyms": [
+        "return rate",
+        "returns rate",
+        "rate of returns",
+        "percentage returned",
+        "share returned"
+      ],
+      "explain_by": [
+        "region",
+        "segment",
+        "ship_mode",
+        "state"
+      ],
+      "ratio": {
+        "numerator": "returned_orders",
+        "denominator": "orders"
+      }
+    },
+    {
+      "name": "returned_sales",
+      "label": "Returned sales",
+      "sql": "SUM(CASE WHEN r.order_id IS NOT NULL THEN o.sales ELSE 0 END)",
+      "format": "currency",
+      "additive": true,
+      "joins": [
+        "returns"
+      ],
+      "description": "Sales on orders that were later returned.",
+      "synonyms": [
+        "returned sales",
+        "sales returned",
+        "value of returns",
+        "returns value"
+      ],
+      "explain_by": [
+        "region",
+        "segment",
+        "category",
+        "ship_mode"
+      ]
+    }
+  ],
+  "ambiguous_terms": {
+    "performance": [
+      "sales",
+      "profit",
+      "profit_margin"
+    ],
+    "performing": [
+      "sales",
+      "profit",
+      "profit_margin"
+    ],
+    "profitability": [
+      "profit_margin",
+      "profit"
+    ],
+    "profitable": [
+      "profit_margin",
+      "profit"
+    ],
+    "returns": [
+      "return_rate",
+      "returned_sales"
+    ],
+    "returned": [
+      "return_rate",
+      "returned_sales"
+    ],
+    "volume": [
+      "quantity",
+      "orders"
+    ],
+    "growth": [
+      "sales",
+      "profit"
+    ],
+    "doing": [
+      "sales",
+      "profit"
+    ]
+  },
+  "dimensions": [
+    {
+      "name": "region",
+      "label": "Region",
+      "plural": "regions",
+      "sql": "o.region",
+      "join": null,
+      "synonyms": [
+        "region",
+        "regions",
+        "territory",
+        "territories"
+      ]
+    },
+    {
+      "name": "state",
+      "label": "State",
+      "plural": "states",
+      "sql": "o.state",
+      "join": null,
+      "synonyms": [
+        "state",
+        "states"
+      ]
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "plural": "cities",
+      "sql": "o.city",
+      "join": null,
+      "synonyms": [
+        "city",
+        "cities",
+        "town",
+        "towns"
+      ]
+    },
+    {
+      "name": "segment",
+      "label": "Segment",
+      "plural": "segments",
+      "sql": "o.segment",
+      "join": null,
+      "synonyms": [
+        "segment",
+        "segments",
+        "customer segment",
+        "customer segments",
+        "customer type"
+      ]
+    },
+    {
+      "name": "category",
+      "label": "Category",
+      "plural": "categories",
+      "sql": "o.category",
+      "join": null,
+      "synonyms": [
+        "category",
+        "categories",
+        "product category",
+        "product categories",
+        "department"
+      ]
+    },
+    {
+      "name": "sub_category",
+      "label": "Sub-category",
+      "plural": "sub-categories",
+      "sql": "o.sub_category",
+      "join": null,
+      "synonyms": [
+        "sub-category",
+        "sub-categories",
+        "sub category",
+        "sub categories",
+        "subcategory",
+        "subcategories",
+        "product type"
+      ]
+    },
+    {
+      "name": "ship_mode",
+      "label": "Ship mode",
+      "plural": "ship modes",
+      "sql": "o.ship_mode",
+      "join": null,
+      "synonyms": [
+        "ship mode",
+        "ship modes",
+        "shipping mode",
+        "shipping method",
+        "shipping",
+        "delivery method"
+      ]
+    },
+    {
+      "name": "customer",
+      "label": "Customer",
+      "plural": "customers",
+      "sql": "o.customer_name",
+      "join": null,
+      "synonyms": [
+        "customer",
+        "customers",
+        "client",
+        "clients",
+        "buyer",
+        "buyers"
+      ]
+    },
+    {
+      "name": "product",
+      "label": "Product",
+      "plural": "products",
+      "sql": "o.product_name",
+      "join": null,
+      "synonyms": [
+        "product",
+        "products",
+        "item",
+        "items",
+        "sku",
+        "skus"
+      ]
+    },
+    {
+      "name": "return_reason",
+      "label": "Return reason",
+      "plural": "return reasons",
+      "sql": "COALESCE(r.return_reason, 'Not returned')",
+      "join": "returns",
+      "synonyms": [
+        "return reason",
+        "return reasons",
+        "reason for return",
+        "reasons for return"
+      ]
+    },
+    {
+      "name": "return_status",
+      "label": "Return status",
+      "plural": "return statuses",
+      "sql": "CASE WHEN r.order_id IS NULL THEN 'Kept' ELSE 'Returned' END",
+      "join": "returns",
+      "synonyms": [
+        "return status",
+        "returned or kept",
+        "returned or not"
+      ]
+    }
+  ],
+  "sample_queries": [
+    "Sales by region in 2021",
+    "Profit margin by category",
+    "Why did profit change in 2021 vs last year?",
+    "Return rate by region",
+    "Top 5 sub-categories by profit in 2021",
+    "Monthly sales trend in 2021",
+    "Which ship mode has the highest return rate?",
+    "Sales for Technology in the West in 2021",
+    "Average order value by segment",
+    "Returned sales by return reason",
+    "Profit by state in 2021",
+    "Average discount by sub-category"
+  ]
+}

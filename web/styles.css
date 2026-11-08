@@ -275,3 +275,9 @@ dialog li b { color: var(--text); font-weight: 600; }
 }
 .sources-btn .refreshed { color: var(--text-3); margin-left: 8px; font-variant-numeric: tabular-nums; }
 .sources-btn .refreshed::before { content: "·"; margin-right: 8px; color: var(--border-strong); }
+
+/* A single environment label; uploads require an explicit data declaration. */
+.demo-label { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .02em; border: 1px solid var(--border); border-radius: 20px; padding: 4px 8px; }
+.synthetic-confirm { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+.soft-btn:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 520px) { .brand { flex-wrap: wrap; gap: 5px; font-size: 16px; } .demo-label { font-size: 10px; } }

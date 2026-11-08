@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 
 CURRENCY = re.compile(r"revenue|sales|amount|cost|price|value|fee|income|spend|margin_amt|profit|billing|invoice|usd|eur|gbp|inr")
-PERCENT = re.compile(r"rate|pct|percent|ratio|util|share|margin_pct|_%")
+PERCENT = re.compile(r"pct|percent|ratio|util|share|margin_pct|_%")
 ID_LIKE = re.compile(r"(^|_)(id|code|key|number|no|num)$")
 
 
@@ -31,12 +31,20 @@ def infer(table: str, columns: list, label: str, row_count: int) -> dict:
         name, words = c["name"], _words(c["label"])
         col = f'{alias}."{name}"'
         if c["type"] == "date":
-            if time_dim is None or "date" in name:
+            # First date column wins, unless an earlier one isn't named like a date ("Order Date" beats "Ship Date").
+            if time_dim is None or ("date" in name and "date" not in time_dim["name"]):
                 time_dim = {"name": name, "label": c["label"], "sql": col, "default_grain": "month"}
             continue
         if c["type"] == "number" and not ID_LIKE.search(name):
-            fmt = "currency" if CURRENCY.search(name) else "number"
-            if PERCENT.search(name):
+            currency = c.get("currency")
+            fmt = (f"currency_{currency}" if currency and currency != "USD" else "currency") if currency or CURRENCY.search(name) else "number"
+            if re.search(r"(?:bill|hourly|unit|daily|cost)_?(?:rate|price)$|^price$", name):
+                metrics.append({"name": name, "label": c["label"], "sql": f"AVG({col})",
+                                "format": "currency" if not currency else ("currency" if currency == "USD" else f"currency_{currency}"),
+                                "additive": False, "description": "Unweighted average; confirm the weighting before business use.",
+                                "synonyms": [words, f"average {words}"]})
+                continue
+            if c.get("percent") or PERCENT.search(name):
                 metrics.append({"name": name, "label": c["label"], "sql": f"AVG({col})", "format": "percent",
                                 "additive": False, "description": f"Average of {c['label']}.",
                                 "synonyms": [words, f"average {words}", f"avg {words}"]})
@@ -78,7 +86,8 @@ def infer(table: str, columns: list, label: str, row_count: int) -> dict:
     return {
         "name": table,
         "label": label,
-        "description": f"Auto-generated from {label}. Edit this file to rename metrics or add synonyms.",
+        "description": f"Draft model from {label}. Review aggregation, units and date field before business use.",
+        "draft": True,
         "base_table": f'"{table}"',
         "base_alias": alias,
         "joins": {},

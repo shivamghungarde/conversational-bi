@@ -1,8 +1,8 @@
 # Conversational BI over a semantic layer
 
-A proof of concept for senior stakeholders. Ask about utilization, revenue and delivery in plain English, with
+A local proof of concept for senior stakeholders, using **synthetic data only**. Ask about utilization, revenue and delivery in plain English, with
 no SQL. You get an instant answer, a chart and the result set. Ask *why* something changed and it explains what
-happened, how it happened and why.
+happened and which measured factors contributed. Driver decompositions do not by themselves prove causation.
 
 ```
 "Why did utilization drop last month?"
@@ -17,22 +17,24 @@ WHY             The change is concentrated by region. India (-3.2 pts, 70% of th
 
 ## Principles
 
-- **On-premises only.** Questions and data never leave this machine. The built-in interpreter is a rules
-  engine. An optional LLM must be self-hosted, and the app refuses any endpoint that isn't on a private network.
+- **On-premises only.** Rules-only questions stay on this machine. An enabled local model receives questions, structured context and bounded dimension-value candidates. The built-in interpreter is a rules
+  engine. An optional LLM must be self-hosted. Its transport pins a validated private IP, disables redirects and proxies, and limits response size.
 - **Asks instead of guessing.** Vague measures ("performance", "hours"), values that match more than one thing,
   vague periods ("recently"), and "why" questions with no period all get a clarifying question with one-click
   answers.
 - **Real-time.** Every question queries the source live, with no result cache. CSV and Excel files reload as
   soon as they change. Each answer shows when it was computed, and the header shows when the data last changed.
-  Answers can auto-refresh.
+  Use Refresh to rerun an answer; freshness metadata updates automatically.
 - **Governed.** Metrics are defined once in a semantic model. Nothing writes free SQL: questions become a
   structured query that is validated and compiled with bound parameters.
 
 ## Run it
 
-Needs Python 3.9+ and nothing else: no packages, no database server, no API key.
+Use Python 3.12+ for a new environment (3.9 remains tested for existing local setups). The API uses FastAPI, Pydantic and Uvicorn; the built-in demo needs no database server or API key.
 
 ```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.lock
 ./run.sh
 ```
 
@@ -42,31 +44,48 @@ keep arriving every few seconds, so the numbers move as you watch. Two events ar
 have real answers: a large Data & AI engagement ended on 31 August 2026, and 18 junior hires joined in India
 on 1 September.
 
+A second demo source, **Superstore Retail**, holds the fictional Superstore sample: 9,994 order lines and 296
+returns from 2018–2021 (`samples/superstore/`). It is a static snapshot, built into SQLite on first run, and its
+model adds profit margin, average order value and a per-order return rate (returns join to orders). Its totals
+match the published Superstore figures ($2,297,201 sales, $286,397 profit). Ask with explicit years, e.g.
+"Why did profit change in 2021 vs last year?".
+
 ```bash
-python3 -m unittest discover -s tests     # 32 tests
+.venv/bin/python -m unittest discover -s tests     # PostgreSQL checks skip without a test server
 ```
 
-## Bring your own data
+`tests/test_edge_cases.py` loads one set of tricky records as a **SQLite database, a CSV export and an Excel
+workbook** and asks every question of all three. Each answer must match totals computed straight from the records.
+The records cover Unicode and punctuation in names, an injection-shaped value, the same word in two dimensions,
+leap day, zero capacity, negative and very large revenue, future dates and empty months. Separate files cover
+semicolon/European CSVs, tab-separated files, booleans, SQL-keyword column names, Excel formulas and sparse cells,
+and empty or header-only uploads. The fixtures live in `tests/fixtures/edge/`; regenerate them with
+`python3 tests/edge_data.py`. Test runs generate their fixtures in temporary directories.
+
+## Connect synthetic data
 
 | Source | How |
 |---|---|
-| **CSV / Excel** | Click **+ Add file** in the header, or start with `BI_SOURCE=/path/report.xlsx ./run.sh`. Types (dates in most formats, `$1,234` amounts, `45%`) and a semantic model are inferred automatically. If the file has billable and available/capacity hours, **utilization** is created as a governed ratio. The draft model is saved as `<file>.semantic.json` for you to refine. |
-| **SQLite** | `BI_SOURCE=/path/warehouse.db BI_MODEL_FILE=semantic/your_model.json ./run.sh` |
-| **PostgreSQL** | `pip install "psycopg[binary]"`, then `BI_SOURCE=postgresql://user@host/db BI_MODEL_FILE=… ./run.sh`. Read-only session. **Not yet tested against a live server.** |
+| **CSV / Excel** | Open the source button in the header, confirm the file is synthetic and choose **Add a CSV or Excel file**, or start with `BI_SOURCE_CLASSIFICATION=synthetic BI_SOURCE=/path/mock.xlsx ./run.sh`. Types (dates in most formats, `$1,234` amounts, `45%`) and a semantic model are inferred automatically. If the file has billable and available/capacity hours, **utilization** is created as a governed ratio. The draft model is saved as `<file>.semantic.json` for you to refine. |
+| **SQLite** | `BI_SOURCE_CLASSIFICATION=synthetic BI_SOURCE=/path/mock.db BI_MODEL_FILE=semantic/your_model.json ./run.sh` |
+| **PostgreSQL** | `.venv/bin/python -m pip install "psycopg[binary]>=3.2,<4"`, then `BI_SOURCE_CLASSIFICATION=synthetic BI_SOURCE=postgresql://user@host/mock_db BI_MODEL_FILE=… ./run.sh`. Read-only session. **Live integration runs in CI; locally skipped unless `BI_TEST_POSTGRES_URL` is set.** |
 
-Uploaded files are stored in `data/uploads/` and come back after a restart. Re-uploading a file with the same name
-replaces it.
+Uploaded files are stored in `data/synthetic/uploads/`. Imports require `X-Data-Classification: synthetic` (the UI sends it after you check the declaration). Only uploads with a synthetic classification sidecar return after a restart. Re-uploading the same name replaces it after validation.
+
+Old `data/uploads/` files are not automatically loaded or labelled synthetic. Re-import mock files through the UI. This declaration does not inspect files for personal data: use fabricated records only. The current profile rejects `BI_DATA_CLASSIFICATION` values other than `synthetic`.
 
 ### Configuration
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `BI_SOURCE` / `BI_MODEL_FILE` | | Your own data source and its semantic model (see above) |
+| `BI_SOURCE` / `BI_MODEL_FILE` | | Synthetic source and its semantic model (see above) |
+| `BI_DATA_CLASSIFICATION` | `synthetic` | This release supports the synthetic demo profile only |
+| `BI_SOURCE_CLASSIFICATION` | unset | Required value `synthetic` when `BI_SOURCE` is configured |
 | `BI_DEMO` | `1` | `0` hides the demo dataset |
 | `BI_LIVE` / `BI_LIVE_INTERVAL` | `1` / `8` | Demo live feed of late timesheets, and seconds between batches |
 | `BI_LOCAL_LLM_URL` / `BI_LOCAL_LLM_MODEL` | off | Optional **self-hosted** model (Ollama, vLLM, LM Studio) for unusual phrasings. Private-network addresses only. **Untested**: no local model was available while building. |
 | `PORT` / `BI_HOST` | `8765` / `127.0.0.1` | Where the server listens |
-| `BI_DATA_DIR` | `data/` | Demo database, uploads, cache and the question log |
+| `BI_DATA_DIR` | `data/synthetic/` | Demo database, uploads, cache and the question log |
 
 ## What a user can do
 
@@ -82,7 +101,7 @@ replaces it.
 - **Trust it:** chips show what was understood, "How this was calculated" shows the SQL, and each answer shows its
   "as of" time.
 - **Start from examples:** sample questions come from the dataset's semantic model through `/api/samples`, rotate
-  in the input placeholder (Tab accepts one) and appear as chips.
+  in the input placeholder (Alt + Enter accepts one) and appear as starter cards on an empty screen.
 
 ## How "why" works
 
@@ -114,7 +133,12 @@ bi/xlsx.py          stdlib .xlsx reader
 bi/autosemantic.py  draft a semantic model from a file's columns
 bi/llm.py           optional on-prem LLM adapter with a private-network guard
 bi/data.py          demo dataset and live timesheet feed
-bi/server.py        stdlib HTTP API, datasets and uploads
+bi/superstore.py    Superstore sample loader (static snapshot)
+bi/config.py        immutable synthetic-demo settings
+bi/contracts.py     Pydantic request contracts
+bi/registry.py      source registry and lifecycle bootstrap
+bi/service.py       structured query and upload use cases
+bi/server.py        FastAPI app factory, request boundary and static UI
 semantic/           semantic models
 web/                UI (vanilla HTML/CSS/JS, no build step)
 ```
@@ -129,6 +153,52 @@ web/                UI (vanilla HTML/CSS/JS, no build step)
 | GET | `/api/freshness?dataset=` | | when the data last changed, coverage |
 | POST | `/api/ask` | `{dataset, question, context?, context_dataset?, clarifications?}` | `type` of `result`, `explain` or `clarify`, plus the `dataset` that answered. `dataset: "auto"` routes the question to the source whose measures match it, and asks which source to use when several fit. |
 | POST | `/api/query` | `{dataset, query}` | runs a structured query (custom breakdowns) |
-| POST | `/api/upload` | raw file, `X-Filename` header | adds a CSV/Excel dataset |
+| POST | `/api/upload` | raw file, `X-Filename` and `X-Data-Classification: synthetic` headers | adds a CSV/Excel dataset |
 
-See [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for taking this from POC to production.
+The versioned API schema is available at `/api/openapi.json`. Invalid request fields return 422; malformed JSON returns 400; oversized bodies return 413. Responses never echo invalid submitted values.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the current design and real-data transition boundary, and [docs/BEST_PRACTICES.md](docs/BEST_PRACTICES.md) for taking this from POC to production.
+
+
+## QC gates
+
+Run the backend, HTTP/import regressions and frontend behaviour checks before merging:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+node tests/test_ui.cjs
+.venv/bin/python -m pip install 'ruff>=0.8,<1'
+.venv/bin/ruff check bi tests
+```
+
+The GitHub workflow repeats these on Python 3.9, 3.12 and 3.13, and runs a separate synthetic PostgreSQL service.
+For local PostgreSQL integration, set `BI_TEST_POSTGRES_URL` to a **disposable test database** where the test account
+can create and drop a randomly named schema. These checks do not certify production capacity or validate a live LLM's
+interpretation accuracy. See [docs/QC_IMPLEMENTATION.md](docs/QC_IMPLEMENTATION.md) for the audit-to-check mapping.
+
+Safety and data contracts:
+
+- Unsupported question conditions trigger clarification. Invalid ranges and unknown source IDs fail explicitly.
+- Comparisons rank the **current** groups, then look up prior values for those same groups. Prior-only groups are
+  outside this view. Driver analysis includes both periods; unsupported non-additive metrics require a denominator.
+- Inferred models are **drafts**. Review aggregation, currency, date field and weighting in the generated model
+  before business use. Bill/unit prices default to unweighted averages; this may not match your business definition.
+- Numeric import treats a single comma followed by three digits as a thousands separator, and a comma followed by
+  one/two digits as a decimal separator. Ambiguous locales still need a reviewed export; there is no locale chooser.
+- Imports reject invalid typed cells instead of silently converting them to blanks. CSVs are limited to 100,000
+  rows and 256 columns. Excel additionally limits sheets, expanded archive size, compression ratio and total cells.
+- Uploads validate a staged replacement before activating it. Model sidecars use `<file>.csv.semantic.json` or
+  `<file>.xlsx.semantic.json`, so extensions and source IDs stay separate. Older sidecars should be reviewed and
+  migrated to these names; they are not automatically reused.
+- Questions use coherent read snapshots. SQL work has a 10-second statement/progress limit; HTTP concurrency is
+  capped at 16 with request read timeouts. These are local-demo limits, not measured capacity guarantees.
+- File schema changes require reimporting/reviewing the model. The last good cache is preserved on failure.
+- Default logs omit raw questions, filters and errors, use private permissions and rotate at 5 MB (one previous file).
+  `BI_LOG_QUESTIONS=1` enables sensitive question/query logging for local evaluation; manage retention accordingly.
+- The local model has a 768-token output cap and a 1 MB response cap; redirects, environment proxies and link-local
+  destinations are refused. Network egress rules remain necessary for deployment assurance.
+- Non-loopback serving requires explicit `BI_ALLOW_NETWORK=1` and an authenticated TLS reverse proxy. Add allowed
+  proxy hostnames through `BI_ALLOWED_HOSTS` (comma-separated). This flag **does not implement authentication**.
+
+Automatic import approval, SSO, measured load capacity and full browser accessibility certification remain future
+pilot work. The application remains intended for a supervised local demo with synthetic data.

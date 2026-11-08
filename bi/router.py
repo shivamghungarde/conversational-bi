@@ -15,7 +15,7 @@ TIE_MARGIN = 0.75
 
 
 def info(engine) -> dict:
-    return {"id": engine.id, "label": engine.model.label, "source": engine.source.describe(),
+    return {"id": engine.id, "label": engine.model.label, "source": engine.source.type_word,
             "kind": engine.source.kind, "type": engine.source.type_word, "live": engine.source.live}
 
 
@@ -53,7 +53,7 @@ def route(engines: list, question: str, context: dict | None, context_dataset: s
         return None, {
             "ok": True, "type": "clarify", "ambiguity": "dataset", "question": question,
             "prompt": "More than one connected source can answer this. Which should I use?",
-            "options": [{"label": f"{e.model.label} · {e.source.type_word}", "hint": e.source.describe(),
+            "options": [{"label": f"{e.model.label} · {e.source.type_word}", "hint": e.source.type_word,
                          "clarification": {"dataset": e.id}} for e in tied],
         }
     return best, None

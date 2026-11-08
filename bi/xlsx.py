@@ -23,6 +23,8 @@ def _col_index(ref: str) -> int:
     n = 0
     for ch in letters:
         n = n * 26 + ord(ch) - 64
+    if n > 256:
+        raise ValueError("Excel file exceeds 256 columns.")
     return n - 1
 
 
@@ -46,6 +48,11 @@ def _date_styles(z: zipfile.ZipFile) -> set:
 
 def sheet_names(path) -> list:
     with zipfile.ZipFile(path) as z:
+        members = z.infolist()
+        if len(members) > 1000 or sum(i.file_size for i in members) > 64 * 1024 * 1024:
+            raise ValueError("Workbook expands beyond the 64 MB safety limit.")
+        if any(i.file_size > 200 * max(i.compress_size, 1) or i.flag_bits & 1 for i in members):
+            raise ValueError("Workbook has unsafe compression or encrypted content.")
         wb = ET.fromstring(z.read("xl/workbook.xml"))
         return [s.get("name") for s in wb.findall("m:sheets/m:sheet", NS)]
 
@@ -53,6 +60,11 @@ def sheet_names(path) -> list:
 def read(path, sheet: str | None = None) -> tuple:
     """Return (headers, rows) from the named sheet, or the sheet with the most rows."""
     with zipfile.ZipFile(path) as z:
+        members = z.infolist()
+        if len(members) > 1000 or sum(i.file_size for i in members) > 64 * 1024 * 1024:
+            raise ValueError("Workbook expands beyond the 64 MB safety limit.")
+        if any(i.file_size > 200 * max(i.compress_size, 1) or i.flag_bits & 1 for i in members):
+            raise ValueError("Workbook has unsafe compression or encrypted content.")
         wb = ET.fromstring(z.read("xl/workbook.xml"))
         rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
         targets = {r.get("Id"): r.get("Target") for r in rels.findall("rel:Relationship", NS)}
@@ -65,12 +77,31 @@ def read(path, sheet: str | None = None) -> tuple:
             for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", NS):
                 shared.append("".join(t.text or "" for t in si.iter(f"{{{NS['m']}}}t")))
         date_styles = _date_styles(z)
+        props = wb.find("m:workbookPr", NS)
+        epoch = dt.datetime(1904, 1, 1) if props is not None and props.get("date1904") in ("1", "true") else EPOCH
+        percent_styles = set()
+        if "xl/styles.xml" in z.namelist():
+            st = ET.fromstring(z.read("xl/styles.xml"))
+            custom = {int(f.get("numFmtId")): f.get("formatCode", "") for f in st.findall("m:numFmts/m:numFmt", NS)}
+            for i, xf in enumerate(st.findall("m:cellXfs/m:xf", NS)):
+                fid = int(xf.get("numFmtId", 0))
+                if fid in (9, 10) or "%" in custom.get(fid, ""):
+                    percent_styles.add(i)
+        if len(sheets) > 20:
+            raise ValueError("Workbook may have at most 20 sheets.")
+        cell_count = 0
 
         def parse(target: str) -> list:
+            nonlocal cell_count
             grid = []
             for row in ET.fromstring(z.read(target)).findall("m:sheetData/m:row", NS):
+                if len(grid) >= 100001:
+                    raise ValueError("Workbook exceeds 100,000 data rows.")
                 values: dict = {}
                 for c in row.findall("m:c", NS):
+                    cell_count += 1
+                    if cell_count > 2000000:
+                        raise ValueError("Workbook exceeds two million cells.")
                     kind, style = c.get("t"), int(c.get("s", 0))
                     v = c.find("m:v", NS)
                     if kind == "inlineStr":
@@ -85,8 +116,10 @@ def read(path, sheet: str | None = None) -> tuple:
                         val = v.text
                     else:
                         num = float(v.text)
-                        if style in date_styles:
-                            d = EPOCH + dt.timedelta(days=num)
+                        if style in percent_styles:
+                            val = f"{num * 100}%"
+                        elif style in date_styles:
+                            d = epoch + dt.timedelta(days=num)
                             val = d.date().isoformat() if d.time() == dt.time() else d.isoformat(sep=" ")
                         else:
                             val = int(num) if num.is_integer() else num

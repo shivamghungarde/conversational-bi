@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import copy
 import datetime as dt
+from decimal import Decimal
 
 from .narrate import change_phrase, fmt, point_or_pct
 from .semantic import SemanticModel, SemanticQuery, TimeRange, _month_span_label, change, shift_range
@@ -32,8 +33,14 @@ def _q(q: SemanticQuery, **kw) -> SemanticQuery:
 
 def _fetch(model, con, q, tr, extra, statements) -> list:
     sql, params, cols = model.compile(q, time_range=tr, extra_metrics=extra)
+    if q.dimensions:
+        sql = sql.rsplit("LIMIT ", 1)[0] + "LIMIT 1001"
     statements.append({"sql": sql, "params": params})
-    return [dict(zip(cols, r)) for r in con.execute(sql, params).fetchall()]
+    rows = [dict(zip(cols, [float(v) if isinstance(v, Decimal) else v for v in r])) for r in con.execute(sql, params).fetchall()]
+    if q.dimensions and len(rows) > 1000:
+        from .semantic import QueryError
+        raise QueryError("Too many groups for reliable driver analysis. Add a filter or choose a less detailed breakdown.")
+    return rows
 
 
 def analyse(model: SemanticModel, con, q: SemanticQuery, claimed: str | None = None,
@@ -42,6 +49,9 @@ def analyse(model: SemanticModel, con, q: SemanticQuery, claimed: str | None = N
     m = q.metrics[0]
     meta = model.metrics[m]
     ratio = meta.get("ratio")
+    if not ratio and not meta.get("additive"):
+        from .semantic import QueryError
+        raise QueryError("This metric has no additive decomposition. Compare its values by group, or define its numerator and denominator first.")
     extra = (ratio["numerator"], ratio["denominator"]) if ratio else ()
     cur_tr = q.time_range
     prev_tr = shift_range(cur_tr, q.compare or "previous_period")
@@ -89,10 +99,17 @@ def analyse(model: SemanticModel, con, q: SemanticQuery, claimed: str | None = N
         same_dir = [x["contribution"] for x in members if abs_delta and x["contribution"] * abs_delta > 0]
         score = (sum(same_dir[:2]) / abs_delta) if abs_delta else 0.0
         # Penalise very granular dimensions slightly: "two consultants" explains less than "two practices".
-        score *= 1.0 if len(members) <= 12 else 0.85
+        score = float(score) * (1.0 if len(members) <= 12 else 0.85)
         ranking.append({"dimension": d, "label": model.dimensions[d]["label"], "score": round(score, 3),
                         "members": len(members)})
-        drivers[d] = members[:MAX_MEMBERS]
+        if len(members) > MAX_MEMBERS:
+            tail = members[MAX_MEMBERS - 1:]
+            other = {"member": "Other groups", "current": None, "previous": None, "change": None,
+                     "contribution": sum(x["contribution"] for x in tail), "is_other": True}
+            if ratio:
+                other.update({k: sum(x[k] for x in tail) for k in ("rate", "mix", "share_now", "share_before")})
+            members = members[:MAX_MEMBERS - 1] + [other]
+        drivers[d] = members
     ranking.sort(key=lambda x: -x["score"])
 
     trend = _trend(model, con, q, cur_tr, prev_tr, statements)
@@ -192,14 +209,14 @@ def _narrate(model, m, cur, prev, delta, abs_delta, cur_tr, prev_tr, drivers, ra
     # ---- what happened ----
     if cur.get(m) is None or prev.get(m) is None:
         return [{"title": "What happened", "text": f"There isn't enough data in both periods to explain {label.lower()}."}]
-    flat = abs(delta or 0) < (0.002 if pct else 0.01)
+    flat = abs(abs_delta) < (0.002 if pct else max(abs(prev[m]) * 0.01, 0.0000001))
     verb = "was essentially flat" if flat else ("rose" if abs_delta > 0 else "fell")
     actual = "up" if abs_delta > 0 else "down"
     lead = ""
     if claimed and not flat and claimed != actual:
         lead = f"Actually, {label.lower()} didn't {'drop' if claimed == 'down' else 'rise'}: "
     what = (f"{lead}{label if not lead else label.lower()} {verb}"
-            + ("" if flat else f" {point_or_pct(delta, pct)}")
+            + ("" if flat else (f" {point_or_pct(delta, pct)}" if delta is not None else f" by {fmt(abs(abs_delta), kind)} from zero"))
             + f", from {fmt(prev[m], kind)} in {_period_name(prev_tr)} to {fmt(cur[m], kind)} in {_period_name(cur_tr)}.")
     if ratio:
         num, den = ratio["numerator"], ratio["denominator"]
@@ -241,7 +258,7 @@ def _narrate(model, m, cur, prev, delta, abs_delta, cur_tr, prev_tr, drivers, ra
     parts = []
     for x in top:
         share = x["contribution"] / abs_delta * 100
-        if ratio and abs(x.get("mix", 0)) > abs(x.get("rate", 0)):
+        if ratio and not x.get("is_other") and abs(x.get("mix", 0)) > abs(x.get("rate", 0)):
             direction = "more" if x["share_now"] > x["share_before"] else "less"
             parts.append(f"{x['member']} ({unit(x['contribution'])}): {direction} of the capacity sat here "
                          f"({x['share_before'] * 100:.0f}% → {x['share_now'] * 100:.0f}% of "

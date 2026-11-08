@@ -5,6 +5,9 @@ import datetime as dt
 import json
 import threading
 import time
+import sqlite3
+import os
+from functools import wraps
 from pathlib import Path
 
 from . import explain, narrate
@@ -14,6 +17,25 @@ from .semantic import QueryError, SemanticModel, SemanticQuery, TimeRange, run
 
 CONFIDENT = 0.5
 VALUES_TTL = 60  # seconds before re-reading dimension values from a live database
+
+
+_LOG_LOCK = threading.Lock()
+
+
+def guarded(snapshot=False):
+    def decorate(fn):
+        @wraps(fn)
+        def wrapped(self, *args, **kwargs):
+            try:
+                if snapshot:
+                    with self.source.snapshot():
+                        return fn(self, *args, **kwargs)
+                return fn(self, *args, **kwargs)
+            except (ValueError, TypeError, AttributeError, KeyError, OverflowError, sqlite3.Error) as exc:
+                message = str(exc) if isinstance(exc, (QueryError, ValueError)) else "The data or query could not be read. Check its structure and source schema."
+                return {"ok": False, "error": message, "elapsed_ms": 0}
+        return wrapped
+    return decorate
 
 
 class Engine:
@@ -26,6 +48,7 @@ class Engine:
         self._values_lock = threading.Lock()
         self._values_key = None
         self._refresh_values(force=True)
+        self.source.close()
 
     # ---- metadata ----------------------------------------------------------
 
@@ -43,7 +66,9 @@ class Engine:
                 for j in self.model._with_requirements({d["join"]} if d.get("join") else set()):
                     spec = self.model.joins[j]
                     sql += f" {'LEFT JOIN' if spec.get('type') == 'left' else 'JOIN'} {spec['table']} {spec['alias']} ON {spec['on']}"
-                values[name] = sorted((v for (v,) in self.source.con.execute(sql).fetchall() if v is not None),
+                sql += " LIMIT 2001"
+                fetched = self.source.con.execute(sql).fetchall()
+                values[name] = sorted((v for (v,) in fetched[:2000] if v is not None),
                                       key=str)
             self.dimension_values = values
             self.rules = RuleParser(self.model, values)
@@ -56,7 +81,7 @@ class Engine:
         for d in cat["dimensions"]:
             d["values"] = [str(v) for v in self.dimension_values.get(d["name"], [])][:200]
         cat.update(id=self.id, llm_enabled=self.llm.available, llm_error=self.llm.error,
-                   source=self.source.describe(), freshness=self.freshness())
+                   source=self.source.type_word, freshness=self.freshness())
         return cat
 
     def freshness(self) -> dict:
@@ -76,11 +101,12 @@ class Engine:
         loaded_at = getattr(self.source, "loaded_at", None)
         if latest is None and loaded_at:
             latest = loaded_at.isoformat(timespec="seconds")
-        return {"checked_at": dt.datetime.now().isoformat(timespec="seconds"), "latest_update": latest,
-                "coverage": coverage, "live": self.source.live, "source": self.source.describe()}
+        return {"checked_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "latest_update": latest,
+                "coverage": coverage, "live": self.source.live, "source": self.source.type_word}
 
     # ---- entry points ------------------------------------------------------
 
+    @guarded()
     def ask(self, question: str, context: dict | None = None, clarifications: dict | None = None,
             today: dt.date | None = None) -> dict:
         started = time.perf_counter()
@@ -90,7 +116,7 @@ class Engine:
         interp = self.rules.parse(question, ctx, today=today, clarifications=clarifications)
         q, engine, notes = interp.query, "rules", list(interp.notes)
 
-        if interp.confidence < CONFIDENT and self.llm.available and not clarifications:
+        if interp.confidence < CONFIDENT and self.llm.available and not clarifications and not interp.ambiguities:
             try:
                 llm_q, message = self.llm.interpret(question, ctx, today=today)
                 if llm_q is None:
@@ -123,6 +149,7 @@ class Engine:
         self._log(out)
         return out
 
+    @guarded(snapshot=True)
     def query(self, q, started: float | None = None, today: dt.date | None = None) -> dict:
         """Run a structured query directly (custom breakdowns, chip edits). No interpretation step."""
         started = started or time.perf_counter()
@@ -145,8 +172,10 @@ class Engine:
             return {"ok": False, "error": str(exc), "elapsed_ms": _ms(started)}
         freshness = self.freshness()
         answer = narrate.answer(self.model, q, result)
-        if not result["rows"] and freshness.get("coverage", {}).get("from"):
-            answer += f" The data covers {freshness['coverage']['from']} to {freshness['coverage']['to']}."
+        coverage = freshness.get("coverage") or {}
+        empty = all(r.get(m) is None for r in result["rows"] for m in q.metrics)  # also "one row of blanks"
+        if empty and coverage.get("from"):
+            answer += f" The data covers {coverage['from']} to {coverage['to']}."
         return {
             "ok": True,
             "type": "result",
@@ -158,12 +187,16 @@ class Engine:
             "totals": result["totals"],
             "sql": result["sql"],
             "compare_range": result["compare_range"],
+            "truncated": result.get("truncated", False),
+            "comparison_policy": result.get("comparison_policy"),
             "suggestions": narrate.suggestions(self.model, q),
             "freshness": freshness,
-            "notes": [],
+            "notes": (["Only the first groups are displayed; totals include all matching data."] if result.get("truncated") else [])
+                     + (["Draft import: review metric aggregation and units before business use."] if self.model.spec.get("draft") else []),
             "elapsed_ms": _ms(started),
         }
 
+    @guarded(snapshot=True)
     def explain(self, q: SemanticQuery, claimed: str | None, today: dt.date, started: float) -> dict:
         try:
             q = self.model.validate(q)
@@ -197,6 +230,10 @@ class Engine:
     def _clarify(self, question: str, amb: dict, today: dt.date, started: float) -> dict:
         kind = amb["kind"]
         tomorrow = (today + dt.timedelta(days=1)).isoformat()
+        if kind == "constraint":
+            return {"ok": True, "type": "clarify", "question": question,
+                    "prompt": "What do you mean by ‘" + amb["term"] + "’? I cannot apply that condition safely. Please rephrase using a known measure, period and group.",
+                    "options": [], "ambiguity": kind, "elapsed_ms": _ms(started)}
         if kind == "metric":
             opts = [{"label": self.model.metrics[m]["label"], "clarification": {"metric": m},
                      "hint": self.model.metrics[m].get("description", "")} for m in amb["options"]]
@@ -267,12 +304,26 @@ class Engine:
         """Append every question to a local JSONL log: the raw material for improving synonyms and evals."""
         if not self.log_path:
             return
-        entry = {"ts": dt.datetime.now().isoformat(timespec="seconds"), "dataset": self.id,
+        entry = {"ts": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "dataset": self.id,
                  "question": out.get("question"), "ok": out.get("ok"), "type": out.get("type"),
                  "engine": out.get("engine"), "confidence": out.get("confidence"), "query": out.get("query"),
                  "ambiguity": out.get("ambiguity"), "error": out.get("error"), "elapsed_ms": out.get("elapsed_ms")}
-        with self._log_lock, open(self.log_path, "a") as fh:
-            fh.write(json.dumps(entry, default=str) + "\n")
+        try:
+            with _LOG_LOCK:
+                self.log_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                if self.log_path.exists() and self.log_path.stat().st_size > 5 * 1024 * 1024:
+                    self.log_path.replace(self.log_path.with_suffix(".previous.jsonl"))
+                # Query logs are sensitive; full text is opt-in.
+                if os.environ.get("BI_LOG_QUESTIONS") != "1":
+                    entry.pop("question", None)
+                    entry.pop("query", None)
+                    entry.pop("error", None)
+                fd = os.open(self.log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+                with os.fdopen(fd, "a") as fh:
+                    fh.write(json.dumps(entry, default=str) + "\n")
+        except OSError:
+            pass  # failure to write telemetry must not prevent an answer
+
 
 
 def _last_month(today: dt.date) -> TimeRange:

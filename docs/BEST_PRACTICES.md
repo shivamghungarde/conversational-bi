@@ -1,5 +1,7 @@
 # Best practices for building this as a standalone product
 
+Current release scope: **local synthetic-data demo**. The implemented design is recorded in [ARCHITECTURE.md](ARCHITECTURE.md). The production controls below are a roadmap, not a requirement to add enterprise infrastructure to this demo.
+
 ## 1. Repository and project hygiene
 
 - **Its own repository (done).** This project was split out of the personal-site repo with its history
@@ -16,8 +18,7 @@
   synonyms. The NL layer never invents logic.
 - **Mark metrics additive or not.** Shares of total and summed totals only make sense for additive metrics
   (revenue yes, margin % no). The narrator already respects this flag.
-- **Add synonyms from real usage.** Review `data/query_log.jsonl` each week. Each low-confidence question means a
-  synonym, metric or dimension is missing.
+- **Add synonyms from real usage.** Review privacy-safe metrics in `data/synthetic/query_log.jsonl`. Question text is off by default; collect curated mock questions separately with expected interpretations.
 - **When you outgrow JSON, adopt a standard.** dbt Semantic Layer (MetricFlow), Cube or LookML each give you
   metrics, joins, caching and access control. Keep `SemanticQuery` as the internal contract and write an adapter
   so the NL and UI layers don't change.
@@ -41,7 +42,7 @@
 
 - Agree the **decomposition** with Finance and Delivery up front. Rate versus mix for utilization is standard, but
   leaders must recognise it. Show "Rate effect" and "Mix effect" in the table and tooltips, as the POC does.
-- Choose `explain_by` dimensions per metric so explanations are causal, not circular.
+- Choose `explain_by` dimensions per metric so explanations identify useful contributors rather than restating the metric. Decomposition alone does not establish causation.
 - Watch out for **partial periods**: compare month-to-date with the same days of last month, never with a full month.
   The POC does this automatically.
 
@@ -52,7 +53,7 @@
   the data's last-change time.
 - **Show freshness everywhere:** when the data last changed (`freshness_sql` in the model, e.g. the latest timesheet
   submission) and when each answer was computed.
-- **Files:** point `BI_SOURCE` at a file that an export job overwrites. The app reloads it when it changes.
+- **Files:** set `BI_SOURCE_CLASSIFICATION=synthetic` and point `BI_SOURCE` at a mock file that an export job overwrites. The app reloads it when it changes.
 - **Later:** pre-aggregate hot paths (daily utilization by practice and region) with incremental refresh once the fact
   table is large. Add row-level security in the compiler from the user's identity.
 
@@ -76,7 +77,7 @@
 
 | Phase | Scope |
 |---|---|
-| **0 (this POC)** | Utilization and revenue model, CSV/Excel/SQLite sources, clarifying questions, what/how/why, live data, on-prem only |
+| **0 (this POC)** | Synthetic data only, FastAPI/Pydantic modular monolith, existing UI, governed SQL, mock live feed and optional on-prem model |
 | **1. Real data** | Connect the real timesheet/finance database, agree metric definitions, SSO and row-level security |
 | **2. Trust** | Feedback buttons, golden-set CI, metric glossary pages, a self-hosted LLM for unusual phrasings |
 | **3. Reach** | Slack/Teams bot over the same `/api/ask`, scheduled digests, saved/pinned questions |

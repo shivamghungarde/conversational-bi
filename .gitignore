@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .env
 .claude/
+.venv/
+*.egg-info/
+.ruff_cache/

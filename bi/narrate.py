@@ -13,16 +13,17 @@ def fmt(value, kind: str) -> str:
         return "n/a"
     if kind == "percent":
         return f"{value * 100:.1f}%"
-    if kind == "currency":
+    if kind.startswith("currency"):
+        symbol = {"currency_EUR": "€", "currency_GBP": "£", "currency_INR": "₹"}.get(kind, "$")
         a = abs(value)
         sign = "-" if value < 0 else ""
         if a >= 1e9:
-            return f"{sign}${a / 1e9:.2f}B"
+            return f"{sign}{symbol}{a / 1e9:.2f}B"
         if a >= 1e6:
-            return f"{sign}${a / 1e6:.2f}M"
+            return f"{sign}{symbol}{a / 1e6:.2f}M"
         if a >= 1e4:
-            return f"{sign}${a / 1e3:.1f}K"
-        return f"{sign}${a:,.2f}"
+            return f"{sign}{symbol}{a / 1e3:.1f}K"
+        return f"{sign}{symbol}{a:,.2f}"
     if isinstance(value, float) and not value.is_integer():
         return f"{value:,.1f}"
     return f"{int(value):,}"
@@ -114,6 +115,8 @@ def answer(model: SemanticModel, q: SemanticQuery, result: dict) -> str:
                 # Summing a ratio across periods is meaningless: compare members in the latest period instead.
                 latest = max(r["period"] for r in rows)
                 last = {r[dim]: r[m] for r in rows if r["period"] == latest and r[m] is not None}
+                if not last:
+                    return f"No valid {mlabel.lower()} values exist in the latest period ({latest})."
                 top = max(last, key=last.get)
                 return _capital(
                     f"{q.time_grain.capitalize()}ly {mlabel.lower()} across {len(by_member)} "
@@ -176,9 +179,9 @@ def answer(model: SemanticModel, q: SemanticQuery, result: dict) -> str:
             text += f" Overall {mlabel.lower()} is {metric_change(model, m, totals[f'{m}__change'])}."
     elif total is not None and len(q.dimensions) == 1 and not q.limit:
         if metric.get("additive"):
-            text += f" Across all {len(ordered)} {plural}, the total is {fmt(total, kind)}."
+            text += f" Across the {len(ordered)} displayed {plural}, the total is {fmt(total, kind)}."
         else:
-            text += f" Across all {len(ordered)} {plural}, overall {mlabel.lower()} is {fmt(total, kind)}."
+            text += f" Across the {len(ordered)} displayed {plural}, overall {mlabel.lower()} is {fmt(total, kind)}."
     elif q.limit and total is not None and metric.get("additive"):
         covered = sum(r[m] for r in ordered)
         text += f" These {len(ordered)} account for {covered / total * 100:.0f}% of {mlabel.lower()}."

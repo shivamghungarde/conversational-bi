@@ -9,6 +9,12 @@ cache), so answers are as current as the data behind them.
 from __future__ import annotations
 
 import csv
+import hashlib
+import uuid
+import math
+import time
+from contextlib import contextmanager
+from urllib.parse import urlparse
 import datetime as dt
 import re
 import sqlite3
@@ -37,6 +43,8 @@ class Source:
     @property
     def con(self):
         """One connection per server thread; reopened if the underlying data was reloaded."""
+        if getattr(self._local, "in_snapshot", False):
+            return self._local.con
         version = self.version()
         if getattr(self._local, "version", None) != version:
             old = getattr(self._local, "con", None)
@@ -45,6 +53,36 @@ class Source:
             self._local.con = self.connect()
             self._local.version = version
         return self._local.con
+
+    def close(self):
+        con = getattr(self._local, "con", None)
+        if con is not None:
+            con.close()
+            self._local.con = None
+            self._local.version = None
+
+    @contextmanager
+    def snapshot(self):
+        if getattr(self._local, "in_snapshot", False):
+            yield self._local.con
+            return
+        con = self.con
+        self._local.in_snapshot = True
+        try:
+            if self.kind == "postgres":
+                with con.transaction():
+                    con.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY")
+                    yield con
+            else:
+                deadline = time.monotonic() + 10
+                con.set_progress_handler(lambda: int(time.monotonic() > deadline), 1000)
+                con.execute("BEGIN")
+                try:
+                    yield con
+                finally:
+                    con.rollback()
+        finally:
+            self._local.in_snapshot = False
 
     def version(self):
         return 0
@@ -56,13 +94,20 @@ class Source:
         raise NotImplementedError
 
 
+def _readonly_sqlite(path):
+    con = sqlite3.connect(Path(path).resolve().as_uri() + "?mode=ro", uri=True, check_same_thread=False, timeout=5)
+    deadline = time.monotonic() + 10
+    con.set_progress_handler(lambda: int(time.monotonic() > deadline), 1000)
+    return con
+
+
 class SQLiteSource(Source):
     def __init__(self, path: Path):
         super().__init__()
         self.path = Path(path)
 
     def connect(self):
-        return sqlite3.connect(f"file:{self.path}?mode=ro", uri=True, check_same_thread=False)
+        return _readonly_sqlite(self.path)
 
     def describe(self) -> str:
         return f"SQLite database {self.path.name}"
@@ -85,12 +130,12 @@ class PostgresSource(Source):
 
     def connect(self):
         import psycopg
-        con = psycopg.connect(self.url, autocommit=True)
+        con = psycopg.connect(self.url, autocommit=True, connect_timeout=5, options="-c statement_timeout=10000")
         con.execute("SET default_transaction_read_only = on")
         return con
 
     def describe(self) -> str:
-        return "PostgreSQL database " + re.sub(r"//[^@]*@", "//", self.url)  # never echo credentials
+        return "SQL"  # public descriptions must never contain DSNs or credentials
 
 
 class FileSource(Source):
@@ -106,7 +151,7 @@ class FileSource(Source):
         self.columns: list = []   # [{name, label, type}]
         self.loaded_mtime = None
         self.loaded_at = None
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._cache_path = None
         self.reload()
 
@@ -118,14 +163,30 @@ class FileSource(Source):
                     self.reload()
         return self.loaded_mtime
 
+    @contextmanager
+    def snapshot(self):
+        with self._lock:
+            with super().snapshot() as con:
+                yield con
+
     def reload(self) -> None:
+        before = self.path.stat()
         headers, rows = read_table(self.path)
         if not headers:
             raise ValueError(f"{self.path.name} has no header row.")
+        if not rows:
+            raise ValueError(f"{self.path.name} has a header but no data rows.")
         columns = profile(headers, rows)
-        mtime = self.path.stat().st_mtime
+        after = self.path.stat()
+        if (before.st_mtime_ns, before.st_size) != (after.st_mtime_ns, after.st_size):
+            raise ValueError("File changed during import; retry after the export finishes.")
+        mtime = after.st_mtime
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        target = self.cache_dir / f"{self.table}-{int(mtime * 1000)}.db"
+        fingerprint = tuple((c["name"], c["type"]) for c in columns)
+        if self.columns and fingerprint != tuple((c["name"], c["type"]) for c in self.columns):
+            raise ValueError("File schema changed. Import it again to review the new measures.")
+        source_id = hashlib.sha256(str(self.path.resolve()).encode()).hexdigest()[:20]
+        target = self.cache_dir / f"{source_id}-{uuid.uuid4().hex}.db"
         con = sqlite3.connect(target)
         con.execute(f'DROP TABLE IF EXISTS "{self.table}"')
         defs = ", ".join(f'"{c["name"]}" {"REAL" if c["type"] == "number" else "TEXT"}' for c in columns)
@@ -136,7 +197,7 @@ class FileSource(Source):
         con.commit()
         con.close()
         old = self._cache_path
-        self._cache_path, self.columns = target, [{k: c[k] for k in ("name", "label", "type", "distinct")}
+        self._cache_path, self.columns = target, [{k: c[k] for k in ("name", "label", "type", "distinct", "percent", "currency")}
                                                   for c in columns]
         self.loaded_mtime, self.loaded_at = mtime, dt.datetime.now()
         if old and old != target and old.exists():
@@ -146,7 +207,7 @@ class FileSource(Source):
                 pass
 
     def connect(self):
-        return sqlite3.connect(f"file:{self._cache_path}?mode=ro", uri=True, check_same_thread=False)
+        return _readonly_sqlite(self._cache_path)
 
     @property
     def type_word(self) -> str:
@@ -188,25 +249,55 @@ def read_table(path: Path) -> tuple:
             dialect = csv.excel
         reader = csv.reader(fh, dialect)
         headers = next(reader, [])
-        rows = [r for r in reader if any(cell.strip() for cell in r)]
+        rows = []
+        for r in reader:
+            if len(r) > 256 or len(rows) >= 100000:
+                raise ValueError("File exceeds the limit of 100,000 rows or 256 columns.")
+            if any(cell.strip() for cell in r):
+                rows.append(r)
     width = len(headers)
+    if width > 256:
+        raise ValueError("Files may have at most 256 columns.")
     return [h.strip() for h in headers], [(r + [None] * width)[:width] for r in rows]
+
+
+BOOLEANS = {"true": "Yes", "false": "No", "yes": "Yes", "no": "No", "y": "Yes", "n": "No"}
 
 
 def _parse_number(v):
     if v is None or v == "":
         return None
     if isinstance(v, bool):
-        return float(v)
+        raise ValueError("boolean")  # true/false is a category (Yes/No), not a number
     if isinstance(v, (int, float)):
+        if not math.isfinite(v):
+            raise ValueError("Non-finite numbers are not supported.")
         return float(v)
-    s = str(v).strip().replace(",", "").replace("$", "").replace("£", "").replace("€", "").replace("₹", "")
+    s = str(v).strip()
+    for symbol in "$£€₹":
+        s = s.replace(symbol, "")
+    s = s.replace(" ", "").replace("\u00a0", "")
     pct = s.endswith("%")
-    s = s.rstrip("%").strip()
-    if s.startswith("(") and s.endswith(")"):
+    s = s.rstrip("%")
+    if s.startswith("(") and s.endswith(")"):  # accounting negatives: (120.00)
         s = "-" + s[1:-1]
+    if re.fullmatch(r"-?\d{1,3}(\.\d{3})+,\d+|-?\d+,\d{1,2}", s):  # European: 1.234,50 or 980,00
+        s = s.replace(".", "").replace(",", ".")
+    else:
+        s = s.replace(",", "")
     num = float(s)
+    if not math.isfinite(num):
+        raise ValueError("Non-finite numbers are not supported.")
     return num / 100 if pct else num
+
+
+def _parse_bool(v):
+    if isinstance(v, bool):
+        return "Yes" if v else "No"
+    key = str(v).strip().lower()
+    if key not in BOOLEANS:
+        raise ValueError(v)
+    return BOOLEANS[key]
 
 
 def _parse_date(v):
@@ -245,14 +336,25 @@ def profile(headers: list, rows: list) -> list:
         seen.add(name)
         values = [r[i] for r in rows if r[i] not in (None, "")]
         sample = values[:2000]
-        if sample and _share(sample, _parse_date) >= 0.95:
+        if re.search(r"(^|_)(id|code|key|number|no|num)$", name):
+            kind, convert = "text", lambda v: None if v in (None, "") else str(v).strip()
+        elif sample and _share(sample, _parse_bool) == 1.0:
+            kind, convert = "text", _safe(_parse_bool)
+        elif sample and _share(sample, _parse_date) >= 0.95:
             kind, convert = "date", _safe(_parse_date)
         elif sample and _share(sample, _parse_number) >= 0.95:
             kind, convert = "number", _safe(_parse_number)
         else:
             kind, convert = "text", lambda v: None if v in (None, "") else str(v).strip()
+        percent = kind == "number" and sum(str(v).strip().endswith("%") for v in sample) > len(sample) / 2
+        bad = [v for v in values if convert(v) is None]
+        if bad:
+            raise ValueError(f"Column '{header}' contains {len(bad)} invalid {kind} values; correct them before importing.")
+        converted = {convert(v) for v in values} - {None}
         columns.append({"name": name, "label": str(header).strip() or name, "type": kind, "convert": convert,
-                        "distinct": len(set(map(str, values)))})
+                        "distinct": len(converted), "percent": percent,
+                        "currency": next((code for symbol, code in [("€", "EUR"), ("£", "GBP"), ("₹", "INR"), ("$", "USD")]
+                                          if any(symbol in str(v) for v in sample)), None)})
     return columns
 
 

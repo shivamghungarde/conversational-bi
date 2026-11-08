@@ -27,8 +27,8 @@ const SERIES = TABLEAU_10;
 
 // A member keeps one colour everywhere ("India" is the same in every chart), like a dashboard's colour legend.
 // Tableau 10 for up to 10 members; Tableau 20 for larger breakdowns, as Tableau does.
-function memberColor(dim, value) {
-  const d = state.model && state.model.dimensions.find((x) => x.name === dim);
+function memberColor(dim, value, model) {
+  const d = model && model.dimensions.find((x) => x.name === dim);
   const values = d ? d.values : [];
   const palette = values.length > 10 ? TABLEAU_20 : TABLEAU_10;
   const i = values.indexOf(String(value));
@@ -36,7 +36,7 @@ function memberColor(dim, value) {
 }
 const GRAINS = ["day", "week", "month", "quarter", "year"];
 
-const state = { datasets: [], models: {}, samples: {}, selected: "auto", model: null, context: null,
+const state = { datasets: [], models: {}, samples: {}, selected: "auto", context: null,
                 contextDataset: null, placeholderTimer: null };
 let VW = 760; // chart width in px, measured from the message column so text stays legible on phones
 
@@ -45,12 +45,13 @@ function fmt(v, kind) {
   if (v === null || v === undefined) return "–";
   if (kind === "percent") return `${(v * 100).toFixed(1)}%`;
   if (kind === "pts") return `${v > 0 ? "+" : ""}${(v * 100).toFixed(1)} pts`;
-  if (kind === "currency") {
+  if (kind.startsWith("currency")) {
+    const symbol = ({ currency_EUR: "€", currency_GBP: "£", currency_INR: "₹" })[kind] || "$";
     const a = Math.abs(v), sign = v < 0 ? "-" : "";
-    if (a >= 1e9) return `${sign}$${(a / 1e9).toFixed(2)}B`;
-    if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(2)}M`;
-    if (a >= 1e4) return `${sign}$${(a / 1e3).toFixed(1)}K`;
-    return `${sign}$${a.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (a >= 1e9) return `${sign}${symbol}${(a / 1e9).toFixed(2)}B`;
+    if (a >= 1e6) return `${sign}${symbol}${(a / 1e6).toFixed(2)}M`;
+    if (a >= 1e4) return `${sign}${symbol}${(a / 1e3).toFixed(1)}K`;
+    return `${sign}${symbol}${a.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
   if (typeof v === "number") return v.toLocaleString(undefined, { maximumFractionDigits: 1 });
   return String(v);
@@ -71,8 +72,8 @@ function ago(iso) {
   if (secs < 86400) return `${Math.round(secs / 3600)} h ago`;
   return t.toLocaleDateString();
 }
-const metricOf = (name) => state.model.metrics.find((m) => m.name === name);
-const dimOf = (name) => state.model.dimensions.find((d) => d.name === name) || { label: name };
+const metricOf = (name, model) => model.metrics.find((m) => m.name === name);
+const dimOf = (name, model) => model.dimensions.find((d) => d.name === name) || { label: name };
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -107,6 +108,14 @@ async function boot(selectId) {
     Promise.all([api("/api/model", undefined, d.id), api("/api/samples", undefined, d.id)])));
   datasets.forEach((d, i) => { state.models[d.id] = loaded[i][0]; state.samples[d.id] = loaded[i][1].samples; });
   const pick = $("#source");
+  if (!datasets.length) {
+    $("#empty h1").textContent = "Connect a data source to begin";
+    $("#ask-btn").disabled = true;
+    pick.replaceChildren(h("option", { value: "" }, "No sources"));
+    renderSources();
+    return;
+  }
+  $("#ask-btn").disabled = false;
   pick.replaceChildren(
     ...(datasets.length > 1 ? [h("option", { value: "auto", title: "Each question goes to the source whose measures match it" }, "All sources")] : []),
     ...datasets.map((d) => h("option", { value: d.id }, `${d.label} · ${d.type}`)));
@@ -175,7 +184,7 @@ function rotatePlaceholder(samples) {
 }
 $("#question").addEventListener("keydown", (e) => {
   const input = e.target;
-  if (e.key === "Tab" && !input.value && input.placeholder.startsWith("Try:")) {
+  if (e.key === "Enter" && e.altKey && !input.value && input.placeholder.startsWith("Try:")) {
     e.preventDefault();
     input.value = input.placeholder.slice(6, -1);
   }
@@ -243,17 +252,25 @@ function renderHelp() {
   );
 }
 $("#help-btn").addEventListener("click", () => $("#help").showModal());
+$("#synthetic-confirm").addEventListener("change", (e) => {
+  $("#upload-btn").disabled = !e.target.checked;
+});
 $("#upload-btn").addEventListener("click", () => $("#upload").click());
 $("#upload").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   e.target.value = "";
   if (!file) return;
+  if (!$("#synthetic-confirm").checked) return toast("Confirm that this file contains synthetic data only.");
   toast(`Reading ${file.name}…`);
-  const res = await fetch("/api/upload", { method: "POST", headers: { "X-Filename": file.name }, body: file }).then((r) => r.json());
+  try {
+  const res = await fetch("/api/upload", { method: "POST", headers: { "X-Filename": file.name, "X-Data-Classification": "synthetic" }, body: file }).then((r) => r.json());
   if (!res.ok) return toast(res.error);
+  $("#synthetic-confirm").checked = false;
+  $("#upload-btn").disabled = true;
   $("#sources").close();
   await boot(res.dataset);
-  toast(`${res.label} is connected. Questions now go to it; switch to Auto in the question bar to use every source.`);
+  toast(`${res.label} is connected. Questions now go to it; switch to All sources in the question bar to use every source.`);
+  } catch (err) { toast("The file could not be uploaded. Check the server connection."); }
 });
 
 // ---------- conversation ----------
@@ -293,11 +310,12 @@ async function submit(question, clarifications, msg) {
   } else {
     msg.el.classList.add("loading");
   }
+  if (!msg.origin) msg.origin = { dataset: state.selected, context: clone(state.context), contextDataset: state.contextDataset };
   scrollToBottom();
   $("#ask-btn").disabled = true;
   try {
-    const res = await api("/api/ask", { question, context: state.context, context_dataset: state.contextDataset,
-                                        clarifications: clarifications || null });
+    const res = await api("/api/ask", { question, context: msg.origin.context, context_dataset: msg.origin.contextDataset,
+                                        clarifications: clarifications || null }, msg.origin.dataset);
     if (res.ok && res.query) { state.context = res.query; state.contextDataset = res.dataset && res.dataset.id; }
     render(msg, res, { question, clarifications });
   } catch (err) {
@@ -310,9 +328,16 @@ async function submit(question, clarifications, msg) {
 
 async function rerun(msg, query) {
   msg.el.classList.add("loading");
-  const res = await api("/api/query", { query }, msg.dataset);
-  if (res.ok) { state.context = res.query; state.contextDataset = msg.dataset; }
-  render(msg, res, null, true);
+  const ticket = (msg.requestVersion || 0) + 1;
+  msg.requestVersion = ticket;
+  try {
+    const res = await api("/api/query", { query }, msg.dataset);
+    if (msg.requestVersion !== ticket) return;
+    if (res.ok) { state.context = res.query; state.contextDataset = msg.dataset; }
+    render(msg, res, null, true);
+  } catch (err) {
+    if (msg.requestVersion === ticket) render(msg, { ok: false, error: "Could not refresh. Check the server connection." });
+  }
 }
 
 function followUp(label, query, dataset) {
@@ -329,14 +354,16 @@ function render(msg, res, origin, keepExplore) {
   const el = msg.el;
   const wasOpen = keepExplore && !$(".explore", el).hidden;
   if (res.dataset) msg.dataset = res.dataset.id;
-  if (msg.dataset) state.model = state.models[msg.dataset];
+  if (msg.dataset) msg.model = state.models[msg.dataset];
   el.classList.remove("loading", "error");
   for (const sel of [".options", ".viz", ".chips", ".controls", ".explore-viz", ".next"]) $(sel, el).replaceChildren();
   $(".explore", el).hidden = true;
   $(".explore-btn", el).hidden = true;
   $(".refresh", el).hidden = true;
+  $(".source-tag", el).hidden = true;
   $(".asof", el).textContent = "";
   VW = Math.max(280, Math.round($(".body", el).clientWidth - 34));
+  msg.width = VW;
 
   if (!res.ok) {
     el.classList.add("error");
@@ -394,14 +421,14 @@ function setupMeta(msg, res, open) {
 }
 
 function renderResult(msg, res) {
-  const el = msg.el, q = res.query;
+  const el = msg.el, q = res.query, model = msg.model;
   $(".answer", el).replaceChildren(h("p", { class: "lead" }, res.answer));
   const viz = $(".viz", el);
   if (res.rows.length) {
-    if (!q.dimensions.length && !q.time_grain) viz.append(heroTiles(res));
-    else if (q.time_grain && q.dimensions.length) viz.append(...multiLine(res));
-    else if (q.time_grain) viz.append(lineChart(res, q.metrics[0]));
-    else viz.append(barChart(res, q.metrics[0]));
+    if (!q.dimensions.length && !q.time_grain) viz.append(heroTiles(res, model));
+    else if (q.time_grain && q.dimensions.length) viz.append(...multiLine(res, model));
+    else if (q.time_grain) viz.append(lineChart(res, q.metrics[0], model));
+    else viz.append(barChart(res, q.metrics[0], model));
   }
   renderChips(msg, res);
   renderControls(msg, res);
@@ -429,8 +456,8 @@ function renderExplain(msg, res) {
   pick.value = res.primary_dimension;
   const draw = () => {
     const members = res.drivers[pick.value] || [];
-    box.replaceChildren(driverChart(members.slice(0, 8), kind, res.decomposition));
-    renderTable(msg, driverColumns(res), members, null, `Contribution by ${dimOf(pick.value).label.toLowerCase()}`);
+    box.replaceChildren(driverChart(members.slice(0, 8), kind, res.decomposition, msg.width));
+    renderTable(msg, driverColumns(res), members, null, `Contribution by ${dimOf(pick.value, msg.model).label.toLowerCase()}`);
   };
   pick.onchange = draw;
   viz.append(h("div", { class: "chart-title", style: "margin-top:16px" }, "What drove it, by ", pick), box);
@@ -467,7 +494,8 @@ function renderChips(msg, res) {
 
 function renderControls(msg, res) {
   const q = res.query;
-  const hasTime = !!state.model.time_dimension;
+  const model = msg.model;
+  const hasTime = !!model.time_dimension;
   const sel = (label, options, value, onchange, disabled) => {
     const el = h("select", { disabled: disabled || null }, options.map(([v, l]) => h("option", { value: v }, l)));
     el.value = value;
@@ -475,12 +503,12 @@ function renderControls(msg, res) {
     return h("label", {}, label, el);
   };
   $(".controls", msg.el).replaceChildren(
-    sel("Break down by", [["", "—"], ...state.model.dimensions.map((d) => [d.name, d.label])], q.dimensions[0] || "",
+    sel("Break down by", [["", "—"], ...model.dimensions.map((d) => [d.name, d.label])], q.dimensions[0] || "",
       (v) => rerun(msg, { ...clone(q), dimensions: v ? [v] : [], order_by: null, limit: v ? q.limit : null })),
     sel("Over time", [["", "—"], ...GRAINS.map((g) => [g, g[0].toUpperCase() + g.slice(1)])], q.time_grain || "",
       (v) => rerun(msg, { ...clone(q), time_grain: v || null, compare: v ? null : q.compare, time_range: v && !q.time_grain ? null : q.time_range }),
       !hasTime),
-    sel("Add measure", [["", "—"], ...state.model.metrics.filter((m) => !q.metrics.includes(m.name)).map((m) => [m.name, m.label])], "",
+    sel("Add measure", [["", "—"], ...model.metrics.filter((m) => !q.metrics.includes(m.name)).map((m) => [m.name, m.label])], "",
       (v) => v && rerun(msg, { ...clone(q), metrics: [...q.metrics, v] })),
     sel("Compare", [["", "—"], ["previous_period", "Previous period"], ["previous_year", "Last year"]], q.compare || "",
       (v) => rerun(msg, { ...clone(q), compare: v || null }), !!q.time_grain || !hasTime),
@@ -504,10 +532,10 @@ function driverColumns(res) {
 }
 
 // ---------- charts ----------
-function heroTiles(res) {
+function heroTiles(res, model) {
   const r = res.rows[0];
   return h("div", { class: "hero" }, res.query.metrics.map((m) => {
-    const meta = metricOf(m);
+    const meta = metricOf(m, model);
     const ch = r[`${m}__change`];
     return h("div", { class: "tile" },
       h("div", { class: "sub" }, meta.label),
@@ -535,24 +563,27 @@ const truncate = (name, px) => {
   return name.length > n ? name.slice(0, n - 1) + "…" : name;
 };
 
-function barChart(res, m) {
-  const meta = metricOf(m);
+function barChart(res, m, model) {
+  const meta = metricOf(m, model);
   const dims = res.query.dimensions;
   const rows = res.rows.slice(0, 12);
   const W = VW, labelW = W < 480 ? 96 : 160, rowH = 30, barH = 16;
   const H = rows.length * rowH + 4;
-  const max = niceMax(Math.max(...rows.map((r) => r[m] || 0)));
+  const [domainMin, domainMax] = yRange(rows.map((r) => r[m]), meta.format);
   const plotW = W - labelW - (W < 480 ? 110 : 140);
+  const zeroX = labelW + (0 - Math.min(domainMin, 0)) / (Math.max(domainMax, 0) - Math.min(domainMin, 0) || 1) * plotW;
+  const scale = plotW / (Math.max(domainMax, 0) - Math.min(domainMin, 0) || 1);
   const chKind = meta.format === "percent" ? "pts" : "percent";
-  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${meta.label} by ${dims.map((d) => dimOf(d).label).join(" and ")}` });
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${meta.label} by ${dims.map((d) => dimOf(d, model).label).join(" and ")}` });
   rows.forEach((r, i) => {
     const y = i * rowH + (rowH - barH) / 2;
-    const w = Math.max(0, (r[m] || 0) / max * plotW);
+    const w = Math.abs(r[m] || 0) * scale;
+    const endX = zeroX + (r[m] || 0) * scale;
     const name = dims.map((d) => r[d]).join(" / ");
     const label = s("text", { x: labelW - 10, y: y + barH / 2 + 4, "text-anchor": "end", class: "label" });
     label.textContent = truncate(name, labelW);
-    svg.append(label, s("path", { d: barPath(labelW, y, w, barH), fill: memberColor(dims[0], r[dims[0]]) }));
-    const val = s("text", { x: labelW + w + 8, y: y + barH / 2 + 4, class: "value" });
+    svg.append(label, s("path", { d: r[m] < 0 ? barPathLeft(zeroX, y, w, barH) : barPath(zeroX, y, w, barH), fill: memberColor(dims[0], r[dims[0]], model) }));
+    const val = s("text", { x: Math.max(labelW + plotW + 8, endX + 8), y: y + barH / 2 + 4, class: "value" });
     const ch = r[`${m}__change`];
     val.textContent = fmt(r[m], meta.format) + (ch !== undefined && ch !== null ? `  ${fmtChange(ch, chKind)}` : "");
     svg.append(val);
@@ -568,9 +599,9 @@ function barChart(res, m) {
   return svg;
 }
 
-function driverChart(members, kind, decomposition) {
+function driverChart(members, kind, decomposition, width = VW) {
   if (!members.length) return h("div", { class: "notes" }, "No drivers to show.");
-  const W = VW, labelW = W < 480 ? 100 : 170, rowH = 28, barH = 14;
+  const W = width, labelW = W < 480 ? 100 : 170, rowH = 28, barH = 14;
   const H = members.length * rowH + 4;
   const max = Math.max(...members.map((m) => Math.abs(m.contribution))) || 1;
   const allNeg = members.every((m) => m.contribution <= 0), allPos = members.every((m) => m.contribution >= 0);
@@ -628,7 +659,13 @@ const xAt = (i, n, W, pad) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (
 function drawLines(svg, series, periods, max, W, H, pad, kind, min = 0) {
   const yAt = (v) => pad.t + (H - pad.t - pad.b) * (1 - ((v || 0) - min) / ((max - min) || 1));
   for (const se of series) {
-    const d = periods.map((p, i) => `${i ? "L" : "M"}${xAt(i, periods.length, W, pad)},${yAt(se.values[p])}`).join("");
+    let drawing = false;
+    const d = periods.map((p, i) => {
+      if (se.values[p] === null || se.values[p] === undefined) { drawing = false; return ""; }
+      const segment = `${drawing ? "L" : "M"}${xAt(i, periods.length, W, pad)},${yAt(se.values[p])}`;
+      drawing = true;
+      return segment;
+    }).join("");
     svg.append(s("path", { d, fill: "none", stroke: se.color, "stroke-width": 2.25, "stroke-linejoin": "round", "stroke-linecap": "round" }));
   }
   const cross = s("line", { y1: pad.t, y2: H - pad.b, stroke: "var(--border)", "stroke-width": 1, visibility: "hidden" });
@@ -645,7 +682,7 @@ function drawLines(svg, series, periods, max, W, H, pad, kind, min = 0) {
     hit.addEventListener("mousemove", (e) => {
       cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("visibility", "visible");
       series.forEach((se, j) => {
-        dots[j].setAttribute("cx", x); dots[j].setAttribute("cy", yAt(se.values[p])); dots[j].setAttribute("visibility", "visible");
+        dots[j].setAttribute("cx", x); dots[j].setAttribute("cy", yAt(se.values[p])); dots[j].setAttribute("visibility", se.values[p] == null ? "hidden" : "visible");
       });
       const lines = [...series].sort((a, b) => (b.values[p] || 0) - (a.values[p] || 0))
         .map((se) => `${series.length > 1 ? esc(se.name) + ": " : ""}${esc(fmt(se.values[p] ?? null, kind))}`);
@@ -659,17 +696,22 @@ function drawLines(svg, series, periods, max, W, H, pad, kind, min = 0) {
 }
 
 function yRange(vals, kind) {
-  let lo = Math.min(...vals), hi = Math.max(...vals);
-  if (kind === "percent") return [Math.max(0, Math.floor(lo * 20) / 20 - 0.05), Math.min(1, Math.ceil(hi * 20) / 20 + 0.05)];
-  return [0, niceMax(hi)];
+  const finite = vals.filter((v) => v !== null && v !== undefined && Number.isFinite(Number(v))).map(Number);
+  if (!finite.length) return [0, 1];
+  let lo = Math.min(...finite), hi = Math.max(...finite);
+  if (kind === "percent") {
+    const padding = Math.max((hi - lo) * 0.1, 0.02);
+    return [lo - padding, hi + padding];
+  }
+  return [lo < 0 ? -niceMax(-lo) : 0, hi > 0 ? niceMax(hi) : (lo === 0 ? 1 : 0)];
 }
 
-function lineChart(res, m) {
-  const meta = metricOf(m);
+function lineChart(res, m, model) {
+  const meta = metricOf(m, model);
   const periods = res.rows.map((r) => r.period);
   const values = Object.fromEntries(res.rows.map((r) => [r.period, r[m]]));
   const W = VW, H = 220, pad = { t: 10, r: 12, b: 26, l: 62 };
-  const [lo, hi] = yRange(res.rows.map((r) => r[m] || 0), meta.format);
+  const [lo, hi] = yRange(res.rows.map((r) => r[m]), meta.format);
   const svg = lineFrame(W, H, pad, hi, meta.format, periods, lo);
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", `${meta.label} trend`);
@@ -681,7 +723,7 @@ function trendChart(rows, kind) {
   const periods = rows.map((r) => r.period);
   const values = Object.fromEntries(rows.map((r) => [r.period, r.value]));
   const W = VW - 28, H = 180, pad = { t: 10, r: 12, b: 26, l: 62 };
-  const [lo, hi] = yRange(rows.map((r) => r.value || 0), kind);
+  const [lo, hi] = yRange(rows.map((r) => r.value), kind);
   const svg = lineFrame(W, H, pad, hi, kind, periods, lo);
   const colW = (W - pad.l - pad.r) / Math.max(periods.length - 1, 1);
   rows.forEach((r, i) => {
@@ -694,12 +736,12 @@ function trendChart(rows, kind) {
   return svg;
 }
 
-function multiLine(res) {
-  const q = res.query, m = q.metrics[0], meta = metricOf(m), dim = q.dimensions[0];
+function multiLine(res, model) {
+  const q = res.query, m = q.metrics[0], meta = metricOf(m, model), dim = q.dimensions[0];
   const periods = [...new Set(res.rows.map((r) => r.period))].sort();
   const byMember = new Map();
   for (const r of res.rows) {
-    const k = String(r[dim]);
+    const k = q.dimensions.map((d) => String(r[d])).join(" / ");
     if (!byMember.has(k)) byMember.set(k, { name: k, values: {}, total: 0 });
     const se = byMember.get(k);
     se.values[r.period] = r[m];
@@ -708,12 +750,12 @@ function multiLine(res) {
   // Colour follows the member (same as in every other chart), never its rank; cap at 8 lines to stay readable.
   const all = [...byMember.values()].sort((a, b) => b.total - a.total);
   const shown = all.slice(0, 8).sort((a, b) => a.name.localeCompare(b.name));
-  shown.forEach((se) => { se.color = memberColor(dim, se.name); });
+  shown.forEach((se) => { se.color = memberColor(dim, se.name, model); });
   const W = VW, H = 240, pad = { t: 10, r: 12, b: 26, l: 62 };
-  const [lo, hi] = yRange(shown.flatMap((se) => Object.values(se.values).map((v) => v || 0)), meta.format);
+  const [lo, hi] = yRange(shown.flatMap((se) => Object.values(se.values)), meta.format);
   const svg = lineFrame(W, H, pad, hi, meta.format, periods, lo);
   svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", `${meta.label} trend by ${dimOf(dim).label}`);
+  svg.setAttribute("aria-label", `${meta.label} trend by ${dimOf(dim, model).label}`);
   drawLines(svg, shown, periods, hi, W, H, pad, meta.format, lo);
   const out = [svg, h("div", { class: "legend" }, shown.map((se) => h("span", { style: `--c:${se.color}` }, se.name)))];
   if (all.length > shown.length) out.push(h("div", { class: "notes" }, `Showing the top 8 of ${all.length}; all are under Explore.`));
@@ -730,6 +772,11 @@ function tip(e, html) {
 }
 function hideTip() { $("#tooltip").hidden = true; }
 
+function csvCell(value) {
+  const safe = typeof value === "string" && /^[\s]*[=+@-]/.test(value) ? "'" + value : value;
+  return `"${String(safe ?? "").replace(/"/g, '""')}"`;
+}
+
 // ---------- table ----------
 function renderTable(msg, cols, sourceRows, res, title) {
   const el = msg.el, table = $("table", el);
@@ -742,18 +789,18 @@ function renderTable(msg, cols, sourceRows, res, title) {
     if (c.role === "change") return h("td", { class: `num ${v > 0 ? "up" : v < 0 ? "down" : ""}` }, fmtChange(v, c.format));
     if (c.role === "contribution") return h("td", { class: `num ${v > 0 ? "up" : v < 0 ? "down" : ""}` }, fmtContribution(v, c.format));
     if (c.role === "metric") return h("td", { class: "num" }, fmt(v, c.format));
-    if (c.role === "dimension" && res) return h("td", { class: "drill", title: `Drill into ${v}`, onclick: () => drill(msg, res.query, c.name, v) }, String(v));
+    if (c.role === "dimension" && res) return h("td", { class: "drill" }, h("button", { type: "button", class: "link-btn", title: `Drill into ${v}`, onclick: () => drill(msg, res.query, c.name, v) }, String(v)));
     return h("td", {}, String(v ?? "–"));
   };
   const draw = () => {
-    const head = h("tr", {}, cols.map((c) => h("th", {
-      class: numeric(c) ? "num" : "",
+    const head = h("tr", {}, cols.map((c) => h("th", { class: numeric(c) ? "num" : "" }, h("button", {
+      type: "button", class: "link-btn",
       onclick: () => {
         sort = sort && sort.col === c.name ? { col: c.name, dir: -sort.dir } : { col: c.name, dir: numeric(c) ? -1 : 1 };
         rows.sort((a, b) => (a[c.name] > b[c.name] ? 1 : a[c.name] < b[c.name] ? -1 : 0) * sort.dir);
         draw();
       },
-    }, c.label + (sort && sort.col === c.name ? (sort.dir > 0 ? " ↑" : " ↓") : ""))));
+    }, c.label + (sort && sort.col === c.name ? (sort.dir > 0 ? " ↑" : " ↓") : "")))));
     const body = rows.map((r) => h("tr", {}, cols.map((c) => cell(c, r))));
     if (res && res.totals && (res.query.dimensions.length || res.query.time_grain) && !res.query.limit) {
       body.push(h("tr", { class: "total" }, cols.map((c, i) => {
@@ -770,7 +817,7 @@ function renderTable(msg, cols, sourceRows, res, title) {
   draw();
   $(".csv", el).onclick = (e) => {
     e.preventDefault();
-    const line = (vals) => vals.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",");
+    const line = (vals) => vals.map(csvCell).join(",");
     const csv = [line(cols.map((c) => c.label)), ...sourceRows.map((r) => line(cols.map((c) => r[c.name])))].join("\n");
     const a = h("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: "result.csv" });
     a.click();
@@ -782,12 +829,12 @@ function drill(msg, query, dim, value) {
   const q = clone(query);
   q.filters = q.filters.filter((f) => f.dimension !== dim).concat([{ dimension: dim, op: "in", values: [value] }]);
   const used = new Set(q.filters.map((f) => f.dimension));
-  const next = state.model.dimensions.find((d) => !used.has(d.name));
+  const next = msg.model.dimensions.find((d) => !used.has(d.name));
   q.dimensions = next ? [next.name] : [];
   q.order_by = null;
   q.limit = null;
   followUp(`Drill into ${value}${next ? ` by ${next.label.toLowerCase()}` : ""}`, q, msg.dataset);
 }
 
-boot();
+boot().catch(() => toast("Could not load sources. Check the server connection."));
 setInterval(pollFreshness, 5000);

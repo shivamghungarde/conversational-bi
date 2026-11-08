@@ -1,0 +1,8 @@
+﻿Order ID;Order Date;Region;Region;Sales (€);Discount;Returned;select;Empty Col;Notes
+1001;2026-09-01;North;N1;€1.234,50;10%;true;A;;"Plain note"
+1002;02/09/2026;South;S1;€980,00;0%;false;B;;"Has a comma, inside"
+
+1003;2026-09-03;North;N2;(€120,00);5%;FALSE;A;;"Multi-line
+note"
+1004;04/09/2026;East;E1;€2.000,00;12.5%;TRUE;C;;"Quote ""inside"""
+1005;2026-09-05;  West  ;W1;€0,00;;false;B;;
