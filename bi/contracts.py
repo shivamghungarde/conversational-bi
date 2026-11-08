@@ -56,6 +56,7 @@ class Clarifications(Contract):
     time: Optional[Period] = None
     compare: Optional[Literal["previous_period", "previous_year"]] = None
     values: list[ClarifiedValue] = Field(default_factory=list, max_length=20)
+    draft: Optional[bool] = None  # the user chose "let the on-prem model try" (guarded SQL fallback)
 
 
 class AskRequest(Contract):

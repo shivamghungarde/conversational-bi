@@ -10,12 +10,13 @@ import os
 from functools import wraps
 from pathlib import Path
 
-from . import explain, narrate
+from . import explain, narrate, sqlguard
 from .llm import LocalInterpreter
 from .parser import RuleParser, default_trend_range, _add_months, _month_start, _quarter_start
 from .semantic import QueryError, SemanticModel, SemanticQuery, TimeRange, run
 
 CONFIDENT = 0.5
+DRAFT_LABEL = "Unverified: written by the on-prem model, not by the governed definitions"
 VALUES_TTL = 60  # seconds before re-reading dimension values from a live database
 
 
@@ -113,14 +114,21 @@ class Engine:
         self._refresh_values()
         today = today or dt.date.today()
         ctx = SemanticQuery.from_dict(context) if context else None
+        if clarifications and clarifications.get("draft"):
+            steps = []
+            _step(steps, "Read the question", "You asked the on-prem model to try, since no governed measure fits")
+            return self._fallback(question, "The governed definitions don't cover this.", today, started, steps)
         interp = self.rules.parse(question, ctx, today=today, clarifications=clarifications)
         q, engine, notes = interp.query, "rules", list(interp.notes)
+        steps = []
 
         if interp.confidence < CONFIDENT and self.llm.available and not clarifications and not interp.ambiguities:
             try:
                 llm_q, message = self.llm.interpret(question, ctx, today=today)
                 if llm_q is None:
-                    return self._unanswerable(question, message, started)
+                    _step(steps, "Read the question", "The built-in rules and the on-prem language model "
+                                                      "couldn't match it to the semantic model")
+                    return self._fallback(question, message, today, started, steps)
                 q, engine, notes = llm_q, "local-llm", []
                 interp.ambiguities = [] if llm_q.metrics else interp.ambiguities
             except Exception as exc:  # local model down or returned bad JSON: use the rule parser's result
@@ -128,13 +136,19 @@ class Engine:
                              f"used the built-in interpreter.")
 
         if interp.confidence == 0 and engine == "rules" and not clarifications:
-            return self._unanswerable(
+            _step(steps, "Read the question", "The built-in rules couldn't match it to the semantic model")
+            return self._fallback(
                 question,
                 "I couldn't match that to anything in the data. Try naming a measure (like "
                 + ", ".join(self.model.metrics[m]["label"].lower() for m in self.model.featured_metrics[:3])
                 + ") and how to slice it.",
-                started,
+                today, started, steps,
             )
+        if engine == "rules":
+            _step(steps, "Read the question", f"Built-in rules, no language model · confidence {interp.confidence:.2f}")
+        else:
+            _step(steps, "Read the question", "On-prem language model (the built-in rules weren't confident); "
+                                              "its reading is checked like any other")
         if interp.ambiguities and engine == "rules":
             out = self._clarify(question, interp.ambiguities[0], today, started)
             self._log(out)
@@ -145,7 +159,7 @@ class Engine:
         else:
             out = self.query(q, started=started)
         out.update(question=question, engine=engine, notes=notes + out.get("notes", []),
-                   confidence=round(interp.confidence, 2))
+                   confidence=round(interp.confidence, 2), steps=steps + out.get("steps", []))
         self._log(out)
         return out
 
@@ -167,9 +181,16 @@ class Engine:
                                      (today + dt.timedelta(days=1)).isoformat(), "Year to date")
         try:
             q = self.model.validate(q)
+            ran = time.perf_counter()
             result = run(self.model, self.source.con, q)
         except (QueryError, ValueError, TypeError) as exc:
             return {"ok": False, "error": str(exc), "elapsed_ms": _ms(started)}
+        steps = []
+        _step(steps, "Matched the semantic model", self._reading(q))
+        _step(steps, "Compiled SQL", f"{_plural(len(result['sql']), 'parameterized statement')} from the governed "
+                                     "definitions; no model-written SQL")
+        _step(steps, f"Ran it read-only on {self._where()}", f"{_plural(len(result['rows']), 'row')} · {_ms(ran)} ms"
+                                                             + (" · live data, no cache" if self.source.live else ""))
         freshness = self.freshness()
         answer = narrate.answer(self.model, q, result)
         coverage = freshness.get("coverage") or {}
@@ -191,6 +212,8 @@ class Engine:
             "comparison_policy": result.get("comparison_policy"),
             "suggestions": narrate.suggestions(self.model, q),
             "freshness": freshness,
+            "steps": steps + [{"title": "Wrote the answer", "detail": "Plain-English template filled from the result; "
+                                                                      "no language model"}],
             "notes": (["Only the first groups are displayed; totals include all matching data."] if result.get("truncated") else [])
                      + (["Draft import: review metric aggregation and units before business use."] if self.model.spec.get("draft") else []),
             "elapsed_ms": _ms(started),
@@ -200,6 +223,7 @@ class Engine:
     def explain(self, q: SemanticQuery, claimed: str | None, today: dt.date, started: float) -> dict:
         try:
             q = self.model.validate(q)
+            ran = time.perf_counter()
             res = explain.analyse(self.model, self.source.con, q, claimed=claimed, today=today)
         except (QueryError, ValueError, TypeError) as exc:
             return {"ok": False, "error": str(exc), "elapsed_ms": _ms(started)}
@@ -223,6 +247,18 @@ class Engine:
             notes=[],
             elapsed_ms=_ms(started),
         )
+        split = "rate and mix" if res.get("decomposition") == "rate_mix" else "contribution"
+        res["steps"] = [
+            {"title": "Matched the semantic model", "detail": self._reading(q)},
+            {"title": "Compared two periods", "detail": f"{res['current']['range']['label'] or 'This period'} vs "
+                                                        f"{res['previous']['range']['label']}"},
+            {"title": f"Split the change by {split}", "detail": "Checked " + (", ".join(d["label"] for d in dims) or
+                                                                              "no breakdowns")
+                                                               + "; each split adds up to the total change"},
+            {"title": f"Ran it read-only on {self._where()}",
+             "detail": f"{_plural(len(res.get('sql') or []), 'parameterized statement')} · {_ms(ran)} ms"},
+            {"title": "Wrote the answer", "detail": "What, how and why from the numbers; no language model"},
+        ]
         return res
 
     # ---- clarifying questions ----------------------------------------------
@@ -230,15 +266,19 @@ class Engine:
     def _clarify(self, question: str, amb: dict, today: dt.date, started: float) -> dict:
         kind = amb["kind"]
         tomorrow = (today + dt.timedelta(days=1)).isoformat()
+        draft = ([{"label": "Something else: let the on-prem model try",
+                   "hint": "It writes a read-only query from the tables; the answer is marked unverified",
+                   "clarification": {"draft": True}}] if self.llm.available and self.llm.sql_fallback else [])
         if kind == "constraint":
             return {"ok": True, "type": "clarify", "question": question,
                     "prompt": "What do you mean by ‘" + amb["term"] + "’? I cannot apply that condition safely. Please rephrase using a known measure, period and group.",
-                    "options": [], "ambiguity": kind, "elapsed_ms": _ms(started)}
+                    "options": draft, "ambiguity": kind, "elapsed_ms": _ms(started)}
         if kind == "metric":
             opts = [{"label": self.model.metrics[m]["label"], "clarification": {"metric": m},
                      "hint": self.model.metrics[m].get("description", "")} for m in amb["options"]]
             prompt = (f"“{amb['term']}” could mean a few things. Which measure should I use?" if amb["term"]
                       else "Which measure would you like to see?")
+            opts += draft
         elif kind == "value":
             opts = [{"label": f"{v} ({self.model.dimensions[d]['label']})",
                      "clarification": {"values": [{"term": amb["term"], "dimension": d, "value": v}]}}
@@ -294,9 +334,90 @@ class Engine:
                     "format": "pts" if m["format"] == "percent" else "percent"}
         return {"name": name, "label": m["label"], "role": "metric", "format": m["format"]}
 
-    def _unanswerable(self, question: str, message: str, started: float) -> dict:
+    def _reading(self, q: SemanticQuery) -> str:
+        parts = [c["label"] for c in narrate.describe(self.model, q)]
+        return " · ".join(parts) or "Default measure"
+
+    def _where(self) -> str:
+        return "PostgreSQL" if self.source.kind == "postgres" else {"SQL": "the SQL database"}.get(
+            self.source.type_word, f"the {self.source.type_word} file")
+
+    def tables(self) -> set:
+        """Tables the semantic model already exposes: the only ones drafted SQL may read."""
+        names = [self.model.spec["base_table"]] + [j["table"] for j in self.model.joins.values()]
+        return {sqlguard._bare(n) for n in names}
+
+    @guarded(snapshot=True)
+    def _fallback(self, question: str, message: str, today: dt.date, started: float, steps: list) -> dict:
+        """The semantic model can't answer: let the on-prem model draft one guarded, read-only SELECT."""
+        if not (self.llm.available and self.llm.sql_fallback):
+            return self._unanswerable(question, message, started, steps)
+        allowed = self.tables()
+        schema_text = self._schema_for_llm(allowed)
+        try:
+            sql, note = self.llm.draft_sql(question, schema_text, self.source.dialect.name, today)
+        except Exception as exc:  # local model down or returned bad JSON
+            _step(steps, "Asked the on-prem model for SQL", f"It was unavailable ({type(exc).__name__})")
+            return self._unanswerable(question, message, started, steps)
+        if sql is None:
+            _step(steps, "Asked the on-prem model for SQL", "It said these tables can't answer the question")
+            return self._unanswerable(question, message, started, steps)
+        _step(steps, "Asked the on-prem model for SQL", "It saw table and column names only, never data rows")
+        try:
+            checked = sqlguard.check(sql, allowed)
+            ran = time.perf_counter()
+            result = sqlguard.execute(self.source, checked, allowed)
+        except sqlguard.Rejected as exc:
+            _step(steps, "Blocked the drafted SQL", str(exc)[:1].upper() + str(exc)[1:])
+            out = self._unanswerable(question, f"{message} The on-prem model drafted a query, but it was blocked "
+                                               f"because {exc}.", started, steps)
+            out["sql"] = [{"sql": sql[:sqlguard.MAX_LENGTH], "params": []}]
+            return out
+        except Exception as exc:  # syntax or type errors in the draft: report, never crash
+            _step(steps, "The drafted SQL failed to run", type(exc).__name__)
+            out = self._unanswerable(question, f"{message} The on-prem model drafted a query, but the database "
+                                               "couldn't run it.", started, steps)
+            out["sql"] = [{"sql": sql[:sqlguard.MAX_LENGTH], "params": []}]
+            return out
+        _step(steps, "Passed the safety check", "One read-only SELECT on " + ", ".join(sorted(allowed))
+                                                + "; enforced by the database too")
+        rows = result["rows"]
+        _step(steps, f"Ran it read-only on {self._where()}",
+              f"{_plural(len(rows), 'row')} (capped at {sqlguard.MAX_ROWS}) · {_ms(ran)} ms")
+        columns = [{"name": c, "label": c.replace("_", " ").capitalize(),
+                    "role": "metric" if rows and all(isinstance(r[c], (int, float)) and not isinstance(r[c], bool)
+                                                     for r in rows if r[c] is not None)
+                    and any(r[c] is not None for r in rows) else "text", "format": "number"}
+                   for c in result["columns"]]
+        answer = (f"The governed definitions don't cover this, so the on-prem model wrote a query. "
+                  f"It returned {_plural(len(rows), 'row')}. Check it before relying on it.")
+        out = {
+            "ok": True, "type": "draft", "verified": False, "label": DRAFT_LABEL, "question": question,
+            "answer": answer, "note": note, "columns": columns, "rows": rows, "truncated": result["truncated"],
+            "sql": [{"sql": checked, "params": []}], "engine": "local-llm-sql", "freshness": self.freshness(),
+            "notes": [f"Showing the first {sqlguard.MAX_ROWS} rows."] if result["truncated"] else [],
+            "steps": steps + [{"title": "Wrote the answer", "detail": "Row count only; the model's own description "
+                                                                      "is shown separately and is unverified"}],
+            "suggestions": [], "elapsed_ms": _ms(started),
+        }
+        self._log(out)
+        return out
+
+    def _schema_for_llm(self, allowed: set) -> str:
+        lines = ["Tables:"]
+        for table in sorted(allowed):
+            lines.append(f"- {table}: " + ", ".join(f"{c} {t}".strip() for c, t in self.source.columns(table)))
+        lines.append("Governed definitions (the alias before each dot is a table above):")
+        alias = {self.model.spec["base_alias"]: sqlguard._bare(self.model.spec["base_table"])}
+        alias.update({j["alias"]: sqlguard._bare(j["table"]) for j in self.model.joins.values()})
+        lines.append("  aliases: " + ", ".join(f"{a} = {t}" for a, t in alias.items()))
+        for m in self.model.metrics.values():
+            lines.append(f"- {m['label']}: {m['sql']}")
+        return "\n".join(lines)
+
+    def _unanswerable(self, question: str, message: str, started: float, steps: list | None = None) -> dict:
         out = {"ok": False, "question": question, "error": message, "elapsed_ms": _ms(started),
-               "samples": self.model.sample_queries[:4]}
+               "samples": self.model.sample_queries[:4], "steps": steps or []}
         self._log(out)
         return out
 
@@ -329,6 +450,14 @@ class Engine:
 def _last_month(today: dt.date) -> TimeRange:
     start = _add_months(_month_start(today), -1)
     return TimeRange(start.isoformat(), _month_start(today).isoformat(), start.strftime("%B %Y"))
+
+
+def _step(steps: list, title: str, detail: str = "") -> None:
+    steps.append({"title": title, "detail": detail})
+
+
+def _plural(n: int, word: str) -> str:
+    return f"{n:,} {word}{'' if n == 1 else 's'}"
 
 
 def _ms(started: float) -> float:

@@ -10,7 +10,7 @@ from . import autosemantic, data, router, superstore
 from .config import ROOT, Settings
 from .engine import Engine
 from .semantic import QueryError, SemanticModel, SemanticQuery
-from .sources import FileSource, SQLiteSource, open_source
+from .sources import FileSource, PostgresSource, SQLiteSource, open_source
 
 UPLOAD_TYPES = (".csv", ".xlsx")
 
@@ -65,6 +65,7 @@ class Registry:
         ctx = body.get("context") if body.get("context_dataset") == engine.id else None
         res = engine.ask(question, ctx, clar or None)
         res["dataset"] = dict(router.info(engine), routed=routed)
+        res["steps"] = [source_step(engine, routed)] + res.get("steps", [])
         return res
 
     def add_file(self, path: Path, register: bool = True, identity: Path | None = None) -> Engine:
@@ -101,6 +102,11 @@ class Registry:
         self.close_connections()
 
 
+def source_step(engine: Engine, routed: bool) -> dict:
+    how = "matched to your question automatically" if routed else "the source you picked"
+    return {"title": "Picked a source", "detail": f"{engine.model.label} · {how}"}
+
+
 def build_registry(settings: Settings) -> Registry:
     reg = Registry(settings)
     settings.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -123,12 +129,19 @@ def build_registry(settings: Settings) -> Registry:
                 feeder = data.LiveFeeder(db, interval=settings.live_interval)
                 reg.feeders.append(feeder)
                 feeder.start()
-            # Second demo: the Superstore retail sample, a static snapshot (no live feed).
-            store_db = settings.data_dir / "superstore.db"
-            superstore.ensure(store_db)
-            store = SQLiteSource(store_db)
+            # Second demo: the Superstore retail sample, a static snapshot (no live feed). It runs on
+            # PostgreSQL when BI_DEMO_POSTGRES_URL is set, otherwise on a local SQLite file.
+            if settings.demo_postgres:
+                url = superstore.resolve_postgres_url(settings.demo_postgres, settings.data_dir)
+                superstore.ensure_postgres(url)
+                store = PostgresSource(url, search_path=superstore.PG_SCHEMA)
+            else:
+                store_db = settings.data_dir / "superstore.db"
+                superstore.ensure(store_db)
+                store = SQLiteSource(store_db)
             store.live = False
-            reg.add(Engine("superstore", SemanticModel.load(ROOT / "semantic" / "superstore.json"), store, reg.log_path))
+            reg.add(Engine("superstore", SemanticModel.load(ROOT / "semantic" / "superstore.json", store.dialect),
+                           store, reg.log_path))
         # Only uploads explicitly acknowledged as synthetic are reloaded.
         for path in sorted((settings.data_dir / "uploads").glob("*")):
             if path.suffix.lower() not in UPLOAD_TYPES:

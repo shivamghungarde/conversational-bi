@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 from . import router
-from .registry import Registry, UPLOAD_TYPES
+from .registry import Registry, UPLOAD_TYPES, source_step
 
 
 class BIService:
@@ -20,6 +20,7 @@ class BIService:
         engine = self.registry.get(body.get("dataset"))
         result = engine.query(body["query"])
         result["dataset"] = dict(router.info(engine), routed=False)
+        result["steps"] = [source_step(engine, False)] + result.get("steps", [])
         return result
 
     def upload(self, payload: bytes, filename: str, classification: str) -> dict:

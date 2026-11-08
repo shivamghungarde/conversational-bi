@@ -50,8 +50,17 @@ model adds profit margin, average order value and a per-order return rate (retur
 match the published Superstore figures ($2,297,201 sales, $286,397 profit). Ask with explicit years, e.g.
 "Why did profit change in 2021 vs last year?".
 
+To run Superstore on **PostgreSQL** instead, set `BI_DEMO_POSTGRES_URL`. The sample is loaded into its own
+`bi_demo_superstore` schema (only when missing or changed) and queried read-only. With nothing installed,
+`embedded` starts a private local PostgreSQL:
+
 ```bash
-.venv/bin/python -m unittest discover -s tests     # PostgreSQL checks skip without a test server
+.venv/bin/python -m pip install "psycopg[binary]>=3.2,<4" pgserver
+BI_DEMO_POSTGRES_URL=embedded ./run.sh
+```
+
+```bash
+.venv/bin/python -m unittest discover -s tests     # PostgreSQL checks run on an embedded server when pgserver is installed
 ```
 
 `tests/test_edge_cases.py` loads one set of tricky records as a **SQLite database, a CSV export and an Excel
@@ -83,7 +92,9 @@ Old `data/uploads/` files are not automatically loaded or labelled synthetic. Re
 | `BI_SOURCE_CLASSIFICATION` | unset | Required value `synthetic` when `BI_SOURCE` is configured |
 | `BI_DEMO` | `1` | `0` hides the demo dataset |
 | `BI_LIVE` / `BI_LIVE_INTERVAL` | `1` / `8` | Demo live feed of late timesheets, and seconds between batches |
-| `BI_LOCAL_LLM_URL` / `BI_LOCAL_LLM_MODEL` | off | Optional **self-hosted** model (Ollama, vLLM, LM Studio) for unusual phrasings. Private-network addresses only. **Untested**: no local model was available while building. |
+| `BI_LOCAL_LLM_URL` / `BI_LOCAL_LLM_MODEL` | off | Optional **self-hosted** model (Ollama, vLLM, LM Studio) for unusual phrasings. Private-network addresses only. **Tested against a stand-in OpenAI-compatible server only**; no real local model was available while building. |
+| `BI_SQL_FALLBACK` | `1` | With a local model set, questions the semantic model can't express may get a **guarded draft**: the model writes one SELECT from table and column names (never data rows), it must pass `bi/sqlguard.py` and the database's own checks, runs read-only with a 200-row cap, and is marked **Unverified**. `0` turns this off. |
+| `BI_DEMO_POSTGRES_URL` | off | Runs the Superstore demo on PostgreSQL (a URL, or `embedded`) |
 | `PORT` / `BI_HOST` | `8765` / `127.0.0.1` | Where the server listens |
 | `BI_DATA_DIR` | `data/synthetic/` | Demo database, uploads, cache and the question log |
 
@@ -98,8 +109,12 @@ Old `data/uploads/` files are not automatically loaded or labelled synthetic. Re
 - **Answer clarifying questions** with one click.
 - **Make custom breakdowns instantly** with the breakdown, trend, metric and compare controls. Click any table
   value to drill into it.
-- **Trust it:** chips show what was understood, "How this was calculated" shows the SQL, and each answer shows its
-  "as of" time.
+- **Trust it:** chips show what was understood, **Show steps** lists every step taken (source, interpretation,
+  compiled SQL, read-only run, narration) followed by the exact SQL, and each answer shows its "as of" time. The
+  open/closed choice is remembered.
+- **Go beyond the model, carefully:** when no governed measure fits and a local model is configured, a clarifying
+  question offers "Something else: let the on-prem model try". The answer is clearly marked Unverified, and a
+  blocked draft shows what was refused and why.
 - **Start from examples:** sample questions come from the dataset's semantic model through `/api/samples`, rotate
   in the input placeholder (Alt + Enter accepts one) and appear as starter cards on an empty screen.
 
@@ -133,7 +148,8 @@ bi/xlsx.py          stdlib .xlsx reader
 bi/autosemantic.py  draft a semantic model from a file's columns
 bi/llm.py           optional on-prem LLM adapter with a private-network guard
 bi/data.py          demo dataset and live timesheet feed
-bi/superstore.py    Superstore sample loader (static snapshot)
+bi/superstore.py    Superstore sample loader (static snapshot; SQLite or PostgreSQL)
+bi/sqlguard.py      safety checks for SQL drafted by the local model (fallback only)
 bi/config.py        immutable synthetic-demo settings
 bi/contracts.py     Pydantic request contracts
 bi/registry.py      source registry and lifecycle bootstrap
@@ -172,8 +188,9 @@ node tests/test_ui.cjs
 ```
 
 The GitHub workflow repeats these on Python 3.9, 3.12 and 3.13, and runs a separate synthetic PostgreSQL service.
-For local PostgreSQL integration, set `BI_TEST_POSTGRES_URL` to a **disposable test database** where the test account
-can create and drop a randomly named schema. These checks do not certify production capacity or validate a live LLM's
+For local PostgreSQL integration, install `pgserver` (an embedded server starts for the tests) or set
+`BI_TEST_POSTGRES_URL` to a **disposable test database** where the test account can create and drop a randomly
+named schema. These checks do not certify production capacity or validate a live LLM's
 interpretation accuracy. See [docs/QC_IMPLEMENTATION.md](docs/QC_IMPLEMENTATION.md) for the audit-to-check mapping.
 
 Safety and data contracts:

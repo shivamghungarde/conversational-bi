@@ -93,6 +93,11 @@ class Source:
     def describe(self) -> str:
         raise NotImplementedError
 
+    def columns(self, table: str) -> list:
+        """(name, type) pairs for one table, for the guarded SQL fallback's prompt."""
+        rows = self.con.execute(f'PRAGMA table_info("{table.replace(chr(34), "")}")').fetchall()
+        return [(r[1], (r[2] or "").upper()) for r in rows]
+
 
 def _readonly_sqlite(path):
     con = sqlite3.connect(Path(path).resolve().as_uri() + "?mode=ro", uri=True, check_same_thread=False, timeout=5)
@@ -116,9 +121,12 @@ class SQLiteSource(Source):
 class PostgresSource(Source):
     kind = "postgres"
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, search_path: str | None = None):
         super().__init__()
         self.url = url
+        if search_path is not None and not re.fullmatch(r"[a-z_][a-z0-9_]{0,62}", search_path):
+            raise ValueError("Invalid PostgreSQL schema name.")
+        self.search_path = search_path
         try:
             import psycopg  # noqa: F401
         except ImportError as exc:
@@ -130,9 +138,16 @@ class PostgresSource(Source):
 
     def connect(self):
         import psycopg
-        con = psycopg.connect(self.url, autocommit=True, connect_timeout=5, options="-c statement_timeout=10000")
+        options = "-c statement_timeout=10000" + (f" -c search_path={self.search_path}" if self.search_path else "")
+        con = psycopg.connect(self.url, autocommit=True, connect_timeout=5, options=options)
         con.execute("SET default_transaction_read_only = on")
         return con
+
+    def columns(self, table: str) -> list:
+        rows = self.con.execute(
+            "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = %s "
+            "AND table_schema = ANY(current_schemas(false)) ORDER BY ordinal_position", (table,)).fetchall()
+        return [(r[0], r[1].upper()) for r in rows]
 
     def describe(self) -> str:
         return "SQL"  # public descriptions must never contain DSNs or credentials

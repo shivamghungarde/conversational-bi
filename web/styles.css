@@ -34,6 +34,7 @@ body {
   margin: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column;
   font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; isolation: isolate;
 }
+[hidden] { display: none !important; }  /* the hidden attribute must win over component display rules */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 button, select, input { font: inherit; color: inherit; }
 kbd { font: 11px/1 var(--sans); padding: 2px 6px; border: 1px solid var(--border-strong); border-radius: 5px; background: var(--surface); }
@@ -191,6 +192,17 @@ tr.total td { font-weight: 600; background: var(--surface-2); }
 .notes { font-size: 12px; color: var(--text-3); margin-top: 8px; }
 details { margin-top: 12px; }
 summary { cursor: pointer; font-size: 12.5px; color: var(--text-3); }
+.steps { margin: 10px 0 12px; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; }
+.steps li::marker { color: var(--text-3); font-variant-numeric: tabular-nums; }
+.step-title { color: var(--text); font-weight: 600; }
+.step-detail { color: var(--text-2); margin-left: 6px; }
+.step-detail::before { content: "·"; margin-right: 6px; color: var(--border-strong); }
+.unverified { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 12.5px; color: var(--text-2); }
+.unverified-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--bad);
+  background: var(--bad-soft); border: 1px solid currentColor; border-radius: 999px; padding: 1px 8px; line-height: 1.5;
+}
+.model-note { font-size: 13px; color: var(--text-3); font-style: italic; margin: 6px 0 0; }
 pre.sql { background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 12px; overflow-x: auto; font-size: 12px; color: var(--text-2); }
 
 /* ---- composer ---- */

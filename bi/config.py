@@ -31,6 +31,7 @@ class Settings:
     allow_network: bool = False
     allowed_hosts: tuple = ("localhost", "127.0.0.1", "::1", "testserver")
     max_requests: int = 16
+    demo_postgres: str | None = None  # PostgreSQL URL (or "embedded") for the Superstore demo
     request_timeout: float = 10.0
 
     def __post_init__(self):
@@ -54,4 +55,5 @@ class Settings:
                    demo=flag("BI_DEMO", True), live=flag("BI_LIVE", True),
                    live_interval=float(os.environ.get("BI_LIVE_INTERVAL", "8")), source=os.environ.get("BI_SOURCE"),
                    model_file=os.environ.get("BI_MODEL_FILE"), source_classification=os.environ.get("BI_SOURCE_CLASSIFICATION"),
-                   allow_network=flag("BI_ALLOW_NETWORK", False), allowed_hosts=allowed)
+                   allow_network=flag("BI_ALLOW_NETWORK", False), allowed_hosts=allowed,
+                   demo_postgres=os.environ.get("BI_DEMO_POSTGRES_URL") or None)

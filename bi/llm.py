@@ -4,13 +4,17 @@ Questions must not leave the network, so this only talks to a self-hosted,
 OpenAI-compatible chat endpoint (Ollama, vLLM, LM Studio, llama.cpp server)
 and refuses any endpoint that doesn't resolve to a loopback or private address.
 
-The model sees bounded dimension value candidates (which may contain business names), but never raw fact rows and never writes SQL. It fills in a JSON
-SemanticQuery whose metric/dimension names are constrained by JSON-schema enums,
-and the result goes through the same validator as everything else.
+The model sees bounded dimension value candidates (which may contain business names), but never raw fact
+rows. Normally it fills in a JSON SemanticQuery whose metric/dimension names are constrained by JSON-schema
+enums, and the result goes through the same validator as everything else.
+
+Fallback: when the semantic model can't express a question, it may draft one SELECT from table and column
+names. That SQL is untrusted, checked by bi/sqlguard.py, run read-only, and labelled unverified.
 
 Off unless configured:
   BI_LOCAL_LLM_URL     e.g. http://localhost:11434   (Ollama) or http://10.0.0.5:8000 (vLLM)
   BI_LOCAL_LLM_MODEL   e.g. llama3.1:8b-instruct
+  BI_SQL_FALLBACK      1 (default) lets it draft guarded SQL when the semantic model can't answer; 0 turns that off
 """
 from __future__ import annotations
 
@@ -125,6 +129,8 @@ class LocalInterpreter:
         self.model = model
         self.url = os.environ.get("BI_LOCAL_LLM_URL", "").rstrip("/")
         self.model_name = os.environ.get("BI_LOCAL_LLM_MODEL", "")
+        # Guarded SQL fallback for questions the semantic model can't answer. On whenever a local model is set.
+        self.sql_fallback = os.environ.get("BI_SQL_FALLBACK", "1") == "1"
         self.error = None
         if self.url and not is_on_premises(self.url):
             self.error = f"BI_LOCAL_LLM_URL {self.url} is not on a private network; refusing to send questions there."
@@ -140,19 +146,50 @@ class LocalInterpreter:
                   today: dt.date | None = None) -> tuple:
         """Return (SemanticQuery | None, message). None means 'not answerable'."""
         today = today or dt.date.today()
-        if not is_on_premises(self.url):
-            raise ValueError("LLM endpoint is not private.")
         user = f"Today: {today.isoformat()}\n"
         if context is not None:
             user += f"Previous query: {json.dumps(context.to_dict())}\n"
         user += f"Question: {question}"
+        data = self._chat(self.system, user, "semantic_query", self.schema)
+        if not data.pop("answerable", True):
+            return None, data.get("reason") or "That isn't something the data model covers yet."
+        data.pop("reason", None)
+        return SemanticQuery.from_dict(data), ""
+
+    # ---- guarded SQL fallback ------------------------------------------------
+
+    def draft_sql(self, question: str, schema_text: str, dialect: str, today: dt.date | None = None) -> tuple:
+        """Ask the local model for one read-only SELECT. Returns (sql | None, note).
+
+        The model sees table and column names plus the governed metric definitions, never data rows.
+        Whatever it returns is untrusted: sqlguard checks it before anything runs.
+        """
+        today = today or dt.date.today()
+        system = "\n".join([
+            f"Write one read-only {'PostgreSQL' if dialect == 'postgres' else 'SQLite'} SELECT statement that answers",
+            "the business question using only the tables and columns below. No comments, no semicolons,",
+            "no data changes. Prefer the governed definitions when a measure matches one. Keep results small:",
+            "aggregate, and use LIMIT for rankings. If the question can't be answered from these tables,",
+            "set answerable=false. 'note' is one plain sentence describing what the query computes.",
+            schema_text,
+        ])
+        schema = {"type": "object", "properties": {"answerable": {"type": "boolean"}, "sql": {"type": "string"},
+                                                   "note": {"type": "string"}},
+                  "required": ["answerable", "sql", "note"]}
+        data = self._chat(system, f"Today: {today.isoformat()}\nQuestion: {question}", "sql_draft", schema)
+        if not data.get("answerable", True) or not str(data.get("sql") or "").strip():
+            return None, str(data.get("note") or "")
+        return str(data["sql"]), str(data.get("note") or "")[:300]
+
+    def _chat(self, system: str, user: str, name: str, schema: dict) -> dict:
+        if not is_on_premises(self.url):
+            raise ValueError("LLM endpoint is not private.")
         body = {
             "model": self.model_name,
             "temperature": 0,
             "max_tokens": 768,
-            "messages": [{"role": "system", "content": self.system}, {"role": "user", "content": user}],
-            "response_format": {"type": "json_schema",
-                                "json_schema": {"name": "semantic_query", "schema": self.schema}},
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "response_format": {"type": "json_schema", "json_schema": {"name": name, "schema": schema}},
         }
         req = urllib.request.Request(f"{self.url}/v1/chat/completions", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json"})
@@ -161,8 +198,4 @@ class LocalInterpreter:
             raw = resp.read(1024 * 1024 + 1)
             if len(raw) > 1024 * 1024:
                 raise ValueError("LLM response exceeds its size limit.")
-            data = json.loads(json.loads(raw)["choices"][0]["message"]["content"])
-        if not data.pop("answerable", True):
-            return None, data.get("reason") or "That isn't something the data model covers yet."
-        data.pop("reason", None)
-        return SemanticQuery.from_dict(data), ""
+            return json.loads(json.loads(raw)["choices"][0]["message"]["content"])

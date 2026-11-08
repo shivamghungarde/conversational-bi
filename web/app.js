@@ -365,12 +365,21 @@ function render(msg, res, origin, keepExplore) {
   VW = Math.max(280, Math.round($(".body", el).clientWidth - 34));
   msg.width = VW;
 
+  $(".table-head", el).hidden = false;
+  $(".table-scroll", el).hidden = false;
   if (!res.ok) {
     el.classList.add("error");
     $(".answer", el).replaceChildren(h("p", {}, res.error));
     if (res.samples) {
       $(".options", el).replaceChildren(...res.samples.slice(0, 3).map((q) =>
         h("button", { type: "button", class: "option", onclick: () => submit(q) }, q)));
+    }
+    if (res.sql) {  // a blocked draft: let the user see what was refused and why
+      $(".explore-btn", el).hidden = false;
+      $(".explore-btn", el).onclick = () => { const p = $(".explore", el); p.hidden = !p.hidden; };
+      $(".table-head", el).hidden = true;
+      $(".table-scroll", el).hidden = true;
+      fillSteps(el, res);
     }
     return;
   }
@@ -387,13 +396,42 @@ function render(msg, res, origin, keepExplore) {
     return;
   }
 
+  if (res.type === "draft") {
+    msg.query = null;
+    setupMeta(msg, res, true);
+    $(".refresh", el).hidden = true;
+    renderDraft(msg, res);
+    fillSteps(el, res);
+    return;
+  }
   msg.query = res.query;
   setupMeta(msg, res, wasOpen);
   if (res.type === "explain") renderExplain(msg, res);
   else renderResult(msg, res);
-  $(".sql", el).textContent = res.sql.map((st, i) => `${i ? "\n\n" : ""}${st.sql}\n-- parameters: ${JSON.stringify(st.params)}`).join("");
+  fillSteps(el, res);
   $(".next", el).replaceChildren(...(res.suggestions || []).map((sug) =>
     h("button", { type: "button", onclick: () => followUp(sug.label, { ...clone(res.query), ...sug.patch }, msg.dataset) }, sug.label)));
+}
+
+// "Show steps": every step the engine took, then the exact SQL. The open/closed choice is remembered.
+function fillSteps(el, res) {
+  const box = $(".sql-wrap", el);
+  box.open = recall("steps") === "open";
+  box.ontoggle = () => remember("steps", box.open ? "open" : "closed");
+  $(".steps", el).replaceChildren(...(res.steps || []).map((st) =>
+    h("li", {}, h("span", { class: "step-title" }, st.title), st.detail ? h("span", { class: "step-detail" }, st.detail) : "")));
+  $(".sql", el).textContent = (res.sql || []).map((st, i) =>
+    `${i ? "\n\n" : ""}${st.sql}${st.params && st.params.length ? `\n-- parameters: ${JSON.stringify(st.params)}` : ""}`).join("");
+}
+
+// Answers the governed model couldn't give: drafted by the on-prem model, guarded, and always marked unverified.
+function renderDraft(msg, res) {
+  const el = msg.el;
+  $(".answer", el).replaceChildren(
+    h("p", { class: "unverified" }, h("span", { class: "unverified-badge" }, "Unverified"), res.label.replace(/^Unverified: (.)/, (_, c) => c.toUpperCase())),
+    h("p", { class: "lead" }, res.answer),
+    res.note ? h("p", { class: "model-note" }, `The model's description: ${res.note}`) : "");
+  renderTable(msg, res.columns, res.rows, null, "Drafted result");
 }
 
 function setupMeta(msg, res, open) {
