@@ -1,0 +1,373 @@
+<title>Data Agent vs Semantic BI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two diagram canvases side by side (stacked on phones), shared legend above, comparison table below */
+:root {
+  --bg: #f3f5f8; --paper: #ffffff; --fg: #1d2633; --muted: #5b6676; --rule: #d9dee6;
+  --grid: #e3e8ef; --line: #4a5566;
+  --proc: #2f6fd6; --proc-bg: #e8f0fd;
+  --llm: #7a4fd0; --llm-bg: #f1ebfc;
+  --prem: #1e8a5a; --prem-bg: #e5f5ec;
+  --dec: #c98a0b; --dec-bg: #fdf4de;
+  --data: #13808a; --data-bg: #e2f4f5;
+  --term: #3a4554; --term-bg: #eceff3;
+  --risk: #c2413b; --risk-bg: #fdecea;
+  --good: #1e8a5a; --good-bg: #e5f5ec;
+  --display: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161d; --paper: #1a2029; --fg: #e4e9f0; --muted: #9aa5b4; --rule: #2e3643;
+  --grid: #232a35; --line: #9aa6b8;
+  --proc: #74a4f2; --proc-bg: #1c2a42; --llm: #b192f0; --llm-bg: #2a2140;
+  --prem: #5cc792; --prem-bg: #173326; --dec: #e6b44a; --dec-bg: #3a2f14;
+  --data: #4fc0c8; --data-bg: #15343a; --term: #c4ccd8; --term-bg: #262d38;
+  --risk: #f0807a; --risk-bg: #3d1f1e; --good: #5cc792; --good-bg: #173326;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161d; --paper: #1a2029; --fg: #e4e9f0; --muted: #9aa5b4; --rule: #2e3643;
+  --grid: #232a35; --line: #9aa6b8;
+  --proc: #74a4f2; --proc-bg: #1c2a42; --llm: #b192f0; --llm-bg: #2a2140;
+  --prem: #5cc792; --prem-bg: #173326; --dec: #e6b44a; --dec-bg: #3a2f14;
+  --data: #4fc0c8; --data-bg: #15343a; --term: #c4ccd8; --term-bg: #262d38;
+  --risk: #f0807a; --risk-bg: #3d1f1e; --good: #5cc792; --good-bg: #173326;
+  color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--display); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+header h1 { font-size: 1.75rem; margin: 0 0 6px; text-wrap: balance; letter-spacing: -0.01em; }
+header p { margin: 0; color: var(--muted); max-width: 70ch; }
+header a { color: var(--proc); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 0.82rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 18px; height: 12px; border-radius: 3px; border: 1.5px solid; display: inline-block; }
+.sw.dia { width: 12px; height: 12px; transform: rotate(45deg); border-radius: 1px; }
+.sw.pill { border-radius: 8px; }
+
+.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 860px) { .boards { grid-template-columns: 1fr; } }
+.board { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; min-width: 0; overflow: hidden; }
+.board h2 { margin: 0; padding: 14px 18px; font-size: 1rem; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; }
+.board h2 small { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+.canvas { overflow-x: auto; background-color: var(--paper);
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.3px); background-size: 16px 16px; }
+.canvas svg { display: block; width: 100%; min-width: 460px; height: auto; }
+
+/* diagram styling */
+svg text { font-family: var(--display); fill: var(--fg); }
+.t { font-size: 13.5px; font-weight: 600; text-anchor: middle; }
+.s { font-size: 11px; fill: var(--muted); text-anchor: middle; }
+.lab { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: var(--muted); }
+.n { stroke-width: 1.6; }
+.proc { fill: var(--proc-bg); stroke: var(--proc); }
+.llm  { fill: var(--llm-bg);  stroke: var(--llm); }
+.prem { fill: var(--prem-bg); stroke: var(--prem); }
+.dec  { fill: var(--dec-bg);  stroke: var(--dec); }
+.data { fill: var(--data-bg); stroke: var(--data); }
+.term { fill: var(--term-bg); stroke: var(--term); }
+.risk { fill: var(--risk-bg); stroke: var(--risk); stroke-dasharray: 0; }
+.good { fill: var(--good-bg); stroke: var(--good); }
+.nt { font-size: 11px; text-anchor: middle; font-weight: 500; }
+.nt.r { fill: var(--risk); } .nt.g { fill: var(--good); }
+.e { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.e.dash { stroke-dasharray: 4 4; }
+.e.dot { stroke-dasharray: 2 3; stroke-width: 1.2; }
+.ah { fill: var(--line); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tablebox { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--rule); }
+thead th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--bg); }
+tbody th { font-weight: 600; width: 18%; white-space: nowrap; }
+tbody tr:last-child > * { border-bottom: 0; }
+td.win { box-shadow: inset 3px 0 0 var(--good); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+.cols section { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 20px; min-width: 0; }
+.cols h3 { margin: 0 0 8px; font-size: 0.95rem; }
+.cols ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.foot { font-size: 0.8rem; color: var(--muted); }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="ah" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>Video's data agent vs our conversational BI</h1>
+    <p>Request flow of the LangChain agent built in the <a href="https://www.youtube.com/watch?v=4H5vdkLsWEI">“AI Data Agent Masterclass” live stream</a> next to ours, from the moment a leader types a question to the answer on screen.</p>
+  </header>
+
+  <div class="legend" aria-label="Legend">
+    <span><i class="sw pill" style="background:var(--term-bg);border-color:var(--term)"></i>Start / end</span>
+    <span><i class="sw" style="background:var(--proc-bg);border-color:var(--proc)"></i>Code step</span>
+    <span><i class="sw" style="background:var(--llm-bg);border-color:var(--llm)"></i>Cloud LLM step</span>
+    <span><i class="sw" style="background:var(--prem-bg);border-color:var(--prem)"></i>On-prem language step</span>
+    <span><i class="sw dia" style="background:var(--dec-bg);border-color:var(--dec)"></i>Decision</span>
+    <span><i class="sw" style="background:var(--data-bg);border-color:var(--data)"></i>Data / definitions</span>
+    <span><i class="sw" style="background:var(--risk-bg);border-color:var(--risk)"></i>Risk</span>
+    <span><i class="sw" style="background:var(--good-bg);border-color:var(--good)"></i>Safeguard</span>
+  </div>
+
+  <div class="boards">
+    <!-- ============ VIDEO AGENT ============ -->
+    <article class="board">
+      <h2>Video: LLM + tools agent <small>LangChain · OpenAI API · Postgres · Streamlit</small></h2>
+      <div class="canvas">
+      <svg viewBox="0 0 620 1030" role="img" aria-label="Flowchart of the video's data agent">
+        <!-- edges -->
+        <path class="e" d="M230 64 V90" marker-end="url(#ah)"/>
+        <path class="e" d="M230 140 V166" marker-end="url(#ah)"/>
+        <path class="e" d="M230 228 V260" marker-end="url(#ah)"/>
+        <path class="e" d="M320 302 H398" marker-end="url(#ah)"/>
+        <text class="lab" x="344" y="294">No</text>
+        <path class="e" d="M580 302 H604 V858 H362" marker-end="url(#ah)"/>
+        <path class="e" d="M230 342 V370" marker-end="url(#ah)"/>
+        <text class="lab" x="240" y="362">Yes</text>
+        <path class="e" d="M230 428 V454" marker-end="url(#ah)"/>
+        <path class="e" d="M230 512 V538" marker-end="url(#ah)"/>
+        <path class="e dash" d="M360 568 H428" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path class="e" d="M230 596 V622" marker-end="url(#ah)"/>
+        <path class="e" d="M230 680 V708" marker-end="url(#ah)"/>
+        <path class="e" d="M140 750 H56 V484 H98" marker-end="url(#ah)"/>
+        <text class="lab" x="62" y="742">Yes</text>
+        <text class="lab" x="18" y="620" transform="rotate(-90 18 620)">runs several queries for “why”</text>
+        <path class="e" d="M230 790 V828" marker-end="url(#ah)"/>
+        <text class="lab" x="240" y="814">No</text>
+        <path class="e" d="M230 886 V912" marker-end="url(#ah)"/>
+        <!-- risk connectors -->
+        <path class="e dot" d="M360 198 H400"/>
+        <path class="e dot" d="M360 400 H400"/>
+        <path class="e dot" d="M360 484 H400"/>
+        <path class="e dot" d="M360 652 H400"/>
+
+        <!-- nodes -->
+        <rect class="n term" x="100" y="16" width="260" height="48" rx="24"/>
+        <text class="t" x="230" y="37">User types a question</text>
+        <text class="s" x="230" y="54">Streamlit chat</text>
+
+        <rect class="n proc" x="100" y="92" width="260" height="48" rx="6"/>
+        <text class="t" x="230" y="121">Add to message history</text>
+
+        <rect class="n llm" x="100" y="168" width="260" height="60" rx="6"/>
+        <text class="t" x="230" y="193">LangChain agent</text>
+        <text class="s" x="230" y="212">cloud LLM over the OpenAI API + system prompt</text>
+
+        <polygon class="n dec" points="230,262 320,302 230,342 140,302"/>
+        <text class="t" x="230" y="307">Tool needed?</text>
+
+        <rect class="n llm" x="400" y="278" width="180" height="48" rx="6"/>
+        <text class="t" x="490" y="298">Answer from the</text>
+        <text class="t" x="490" y="315">model's own knowledge</text>
+
+        <rect class="n proc" x="100" y="372" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="396">Tool: get_schema</text>
+        <text class="s" x="230" y="414">table and column names, information_schema</text>
+
+        <rect class="n llm" x="100" y="456" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="480">LLM writes the SQL</text>
+        <text class="s" x="230" y="498">free-form, from the schema alone</text>
+
+        <rect class="n proc" x="100" y="540" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="564">Tool: execute_query</text>
+        <text class="s" x="230" y="582">pandas.read_sql over SQLAlchemy</text>
+
+        <path class="n data" d="M430 546 a65 10 0 0 1 130 0 v44 a65 10 0 0 1 -130 0 z"/>
+        <path class="n data" d="M430 546 a65 10 0 0 0 130 0" fill="none"/>
+        <text class="t" x="495" y="578">PostgreSQL</text>
+
+        <rect class="n llm" x="100" y="624" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="648">Result rows go back to the LLM</text>
+        <text class="s" x="230" y="666">as text, alongside the question</text>
+
+        <polygon class="n dec" points="230,710 320,750 230,790 140,750"/>
+        <text class="t" x="230" y="755">Another query?</text>
+
+        <rect class="n llm" x="100" y="830" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="854">LLM writes the answer</text>
+        <text class="s" x="230" y="872">narrative; wording and numbers can vary</text>
+
+        <rect class="n term" x="100" y="914" width="260" height="48" rx="24"/>
+        <text class="t" x="230" y="935">Answer text in chat</text>
+        <text class="s" x="230" y="952">optional log of tool calls</text>
+
+        <!-- risk notes -->
+        <rect class="n risk" x="400" y="174" width="180" height="48" rx="4"/>
+        <text class="nt r" x="490" y="194">Every question goes to a</text>
+        <text class="nt r" x="490" y="210">cloud API, billed per token</text>
+        <rect class="n risk" x="400" y="376" width="180" height="48" rx="4"/>
+        <text class="nt r" x="490" y="396">“Sales”, “margin” guessed</text>
+        <text class="nt r" x="490" y="412">from column names</text>
+        <rect class="n risk" x="400" y="460" width="180" height="48" rx="4"/>
+        <text class="nt r" x="490" y="480">SELECT-only is a docstring</text>
+        <text class="nt r" x="490" y="496">request, not enforced</text>
+        <rect class="n risk" x="400" y="628" width="180" height="48" rx="4"/>
+        <text class="nt r" x="490" y="648">Schema and data leave</text>
+        <text class="nt r" x="490" y="664">your network</text>
+      </svg>
+      </div>
+    </article>
+
+    <!-- ============ OURS ============ -->
+    <article class="board">
+      <h2>Ours: semantic layer + rules <small>FastAPI · semantic model · SQL / CSV / Excel</small></h2>
+      <div class="canvas">
+      <svg viewBox="0 0 620 1030" role="img" aria-label="Flowchart of our conversational BI">
+        <!-- edges -->
+        <path class="e" d="M230 64 V90" marker-end="url(#ah)"/>
+        <path class="e" d="M320 132 H398" marker-end="url(#ah)"/>
+        <text class="lab" x="344" y="124">No</text>
+        <path class="e" d="M490 160 V190 H230"/>
+        <path class="e" d="M230 172 V208" marker-end="url(#ah)"/>
+        <text class="lab" x="220" y="186" text-anchor="end">Yes</text>
+        <path class="e" d="M230 270 V296" marker-end="url(#ah)"/>
+        <path class="e" d="M230 354 V382" marker-end="url(#ah)"/>
+        <path class="e" d="M320 424 H398" marker-end="url(#ah)"/>
+        <text class="lab" x="340" y="416">Yes</text>
+        <path class="e" d="M580 424 H604 V240 H362" marker-end="url(#ah)"/>
+        <text class="lab" x="596" y="330" text-anchor="end">user picks</text>
+        <path class="e" d="M230 464 V498" marker-end="url(#ah)"/>
+        <text class="lab" x="240" y="486">No</text>
+        <path class="e dash" d="M360 528 H418" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path class="e" d="M230 556 V586" marker-end="url(#ah)"/>
+        <path class="e" d="M230 644 V674" marker-end="url(#ah)"/>
+        <path class="e dash" d="M360 704 H428" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path class="e" d="M230 732 V762" marker-end="url(#ah)"/>
+        <path class="e" d="M320 804 H398" marker-end="url(#ah)"/>
+        <text class="lab" x="340" y="796">Yes</text>
+        <path class="e" d="M490 832 V862 H230"/>
+        <path class="e" d="M230 844 V878" marker-end="url(#ah)"/>
+        <text class="lab" x="220" y="858" text-anchor="end">No</text>
+        <path class="e" d="M230 936 V962" marker-end="url(#ah)"/>
+        <!-- safeguard connectors -->
+        <path class="e dot" d="M360 326 H400"/>
+        <path class="e dot" d="M360 616 H400"/>
+        <path class="e dot" d="M360 908 H400"/>
+
+        <!-- nodes -->
+        <rect class="n term" x="100" y="16" width="260" height="48" rx="24"/>
+        <text class="t" x="230" y="37">User types a question</text>
+        <text class="s" x="230" y="54">web chat, optional source picker</text>
+
+        <polygon class="n dec" points="230,92 320,132 230,172 140,132"/>
+        <text class="t" x="230" y="137">Source picked?</text>
+
+        <rect class="n proc" x="400" y="104" width="180" height="56" rx="6"/>
+        <text class="t" x="490" y="127">Router matches a source</text>
+        <text class="s" x="490" y="145">asks which one if two tie</text>
+
+        <rect class="n prem" x="100" y="210" width="260" height="60" rx="6"/>
+        <text class="t" x="230" y="235">Rules parser</text>
+        <text class="s" x="230" y="254">local LLM optional, private network only</text>
+
+        <rect class="n proc" x="100" y="298" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="322">Structured query</text>
+        <text class="s" x="230" y="340">measures · breakdowns · filters · period</text>
+
+        <polygon class="n dec" points="230,384 320,424 230,464 140,424"/>
+        <text class="t" x="230" y="429">Ambiguous?</text>
+
+        <rect class="n dec" x="400" y="396" width="180" height="56" rx="6"/>
+        <text class="t" x="490" y="419">Clarifying question</text>
+        <text class="s" x="490" y="437">with clickable options</text>
+
+        <rect class="n proc" x="100" y="500" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="524">Check against semantic model</text>
+        <text class="s" x="230" y="542">only defined measures and fields</text>
+
+        <path class="n data" d="M420 498 h150 v52 q-37 14 -75 0 t-75 0 z"/>
+        <text class="t" x="495" y="520">Semantic model</text>
+        <text class="s" x="495" y="537">governed definitions</text>
+
+        <rect class="n proc" x="100" y="588" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="612">Compile parameterized SQL</text>
+        <text class="s" x="230" y="630">no model-written SQL</text>
+
+        <rect class="n proc" x="100" y="676" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="700">Run read-only, live</text>
+        <text class="s" x="230" y="718">no result cache</text>
+
+        <path class="n data" d="M430 682 a65 10 0 0 1 130 0 v44 a65 10 0 0 1 -130 0 z"/>
+        <path class="n data" d="M430 682 a65 10 0 0 0 130 0" fill="none"/>
+        <text class="t" x="495" y="708">SQL database</text>
+        <text class="s" x="495" y="724">or CSV / Excel</text>
+
+        <polygon class="n dec" points="230,764 320,804 230,844 140,804"/>
+        <text class="t" x="230" y="809">“Why” question?</text>
+
+        <rect class="n proc" x="400" y="776" width="180" height="56" rx="6"/>
+        <text class="t" x="490" y="799">Driver analysis</text>
+        <text class="s" x="490" y="817">contributions add up exactly</text>
+
+        <rect class="n prem" x="100" y="880" width="260" height="56" rx="6"/>
+        <text class="t" x="230" y="904">Plain-English narration</text>
+        <text class="s" x="230" y="922">what, how, why + data freshness</text>
+
+        <rect class="n term" x="100" y="964" width="260" height="48" rx="24"/>
+        <text class="t" x="230" y="985">Answer, chart and table</text>
+        <text class="s" x="230" y="1002">plus the SQL that ran</text>
+
+        <!-- safeguard notes -->
+        <rect class="n good" x="400" y="302" width="180" height="48" rx="4"/>
+        <text class="nt g" x="490" y="322">No LLM tokens for</text>
+        <text class="nt g" x="490" y="338">rule-parsed questions</text>
+        <rect class="n good" x="400" y="592" width="180" height="48" rx="4"/>
+        <text class="nt g" x="490" y="612">Same question,</text>
+        <text class="nt g" x="490" y="628">same SQL, every time</text>
+        <rect class="n good" x="400" y="884" width="180" height="48" rx="4"/>
+        <text class="nt g" x="490" y="904">Question and data stay</text>
+        <text class="nt g" x="490" y="920">on your network</text>
+      </svg>
+      </div>
+    </article>
+  </div>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th></th><th>Video's data agent</th><th>Our conversational BI</th></tr></thead>
+      <tbody>
+        <tr><th>Who writes SQL</th><td>The LLM, from table and column names</td><td class="win">The semantic layer compiles it; no LLM writes SQL</td></tr>
+        <tr><th>Where the question goes</th><td>OpenAI's cloud API, with the schema and result rows</td><td class="win">Stays on your network; a local LLM is allowed only on a private address</td></tr>
+        <tr><th>What “margin” means</th><td>Guessed again for each question</td><td class="win">Defined once in the semantic model</td></tr>
+        <tr><th>Unclear questions</th><td>The model assumes and answers</td><td class="win">Asks a clarifying question with options</td></tr>
+        <tr><th>“Why” questions</th><td>Runs several exploratory queries and writes a story</td><td class="win">Driver analysis; contributions add up to the total change</td></tr>
+        <tr><th>Repeatability</th><td>Wording and numbers can vary run to run</td><td class="win">Same question, same SQL, same answer</td></tr>
+        <tr><th>Cost per question</th><td>API tokens on every call, several calls for “why”</td><td class="win">No tokens for questions the rules parser handles</td></tr>
+        <tr><th>Safety</th><td>SELECT-only is asked for in a docstring</td><td class="win">Validated, parameterized, read-only</td></tr>
+        <tr><th>Flexibility</th><td class="win">Anything the schema can answer, ad-hoc joins, general knowledge</td><td>Only the measures and fields the model defines</td></tr>
+        <tr><th>Effort to start</th><td class="win">About 100 lines; point it at any Postgres</td><td>A semantic model per source (auto-drafted for CSV / Excel)</td></tr>
+        <tr><th>Interface</th><td>Streamlit chat with chat history and a tool-call toggle</td><td class="win">Web app with charts, tables, source picker and data freshness</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cols">
+    <section>
+      <h3>Where the video's approach is stronger</h3>
+      <ul>
+        <li>It can try any question the schema supports, including joins nobody modelled.</li>
+        <li>Setup is minutes: no definitions to write before the first answer.</li>
+        <li>For open-ended exploration, an agent that keeps querying finds angles a fixed driver analysis won't.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Worth borrowing</h3>
+      <ul>
+        <li>A guarded fallback: when the semantic model can't answer, a local LLM drafts SQL that must pass a read-only, allow-listed check, clearly labelled as unverified.</li>
+        <li>A “show steps” toggle alongside the SQL we already show, listing each step the engine took.</li>
+        <li>Connecting to a real Postgres instance as the demo source, as the video does.</li>
+      </ul>
+    </section>
+  </div>
+
+  <p class="foot">The video is a beginner tutorial; the presenter lists guardrails, LangGraph workflows and deployment as later course topics, so its flow reflects a teaching build, not a finished product.</p>
+</div>

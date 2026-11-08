@@ -1,0 +1,20 @@
+﻿Date,Consultant,Practice,Region,Grade,Client,Available Hours,Billable Hours,Revenue ($)
+29/02/2024,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,8,"$1,480.00"
+28/02/2025,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,6,"$1,110.00"
+15/12/2025,李 伟,Cloud,India,Consultant,Cloud,8,8,$616.00
+31/08/2026,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,8,"$1,480.00"
+31/08/2026,李 伟,Cloud,India,Consultant,Cloud,8,7,$539.00
+31/08/2026,Seán O'Brien,R/D Lab,Europe,Manager,Robert'); DROP TABLE timesheets;--,8,6,"$1,440.00"
+31/08/2026,Bench Only,Strategy,India,Analyst,Bench / internal,8,0,$0.00
+01/09/2026,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,4,$740.00
+01/09/2026,李 伟,Cloud,India,Consultant,Cloud,8,7,$539.00
+01/09/2026,Seán O'Brien,R/D Lab,Europe,Manager,Robert'); DROP TABLE timesheets;--,8,6,"$1,440.00"
+01/09/2026,"Smith, Jane",Cloud,APAC,Analyst,Bench / internal,8,0,$0.00
+01/09/2026,Bench Only,Strategy,India,Analyst,Bench / internal,8,0,$0.00
+02/09/2026,Leave Only,Strategy,Europe,Director,Bench / internal,0,0,$0.00
+15/09/2026,"Smith, Jane",Cloud,APAC,Analyst,Mega Corp,8,8,"$12,345,678.90"
+30/09/2026,Seán O'Brien,R/D Lab,Europe,Manager,Robert'); DROP TABLE timesheets;--,8,2,($500.00)
+01/10/2026,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,8,"$1,480.00"
+23/10/2026,李 伟,Cloud,India,Consultant,Cloud,8,8,$616.00
+15/01/2027,Zoë Müller,Data & AI,Europe,Senior Consultant,Ünïcödé GmbH,8,8,"$1,480.00"
+

@@ -1,96 +1,224 @@
-"""HTTP API + static UI, standard library only.
-
-GET  /api/health          liveness
-GET  /api/model           metrics, dimensions and their values (for the UI's pickers)
-GET  /api/samples         sample questions (UI placeholder and chips)
-POST /api/ask             {question, context?}  -> answer + result set
-POST /api/query           {query}               -> run a structured query (custom breakdowns)
-"""
+"""FastAPI transport for the single-process synthetic BI demo."""
 from __future__ import annotations
 
+import asyncio
 import json
-import mimetypes
-import os
 import random
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
+from contextlib import asynccontextmanager
+from functools import wraps
+from typing import Optional
+from urllib.parse import urlparse
 
-from . import data
-from .engine import Engine
+from fastapi import FastAPI, Header, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
-ROOT = Path(__file__).resolve().parent.parent
-WEB = ROOT / "web"
+from .config import ROOT, Settings
+from .contracts import AskRequest, QueryRequest
+from .registry import Registry, build_registry
+from .service import BIService
+
 MAX_BODY = 64 * 1024
+MAX_UPLOAD = 25 * 1024 * 1024
+HEADERS = {
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+}
 
 
-def make_handler(engine: Engine):
-    class Handler(BaseHTTPRequestHandler):
-        server_version = "ConversationalBI/0.1"
+def error(status, message):
+    return JSONResponse({"ok": False, "error": message}, status_code=status)
 
-        def log_message(self, fmt, *args):  # quieter default logging
-            if os.environ.get("BI_QUIET") != "1":
-                super().log_message(fmt, *args)
 
-        def _send(self, status: int, body, content_type="application/json"):
-            payload = body if isinstance(body, bytes) else json.dumps(body, default=str).encode()
-            self.send_response(status)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", str(len(payload)))
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("X-Content-Type-Options", "nosniff")
-            self.end_headers()
-            self.wfile.write(payload)
+class RequestBoundary:
+    """Bound streamed bodies, active requests and body-read time; check same-origin access."""
+    def __init__(self, app, settings):
+        self.app, self.settings = app, settings
+        self.slots = asyncio.Semaphore(settings.max_requests)
 
-        def _json_body(self) -> dict:
-            length = int(self.headers.get("Content-Length") or 0)
-            if length > MAX_BODY:
-                raise ValueError("Request too large.")
-            return json.loads(self.rfile.read(length) or b"{}")
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
 
-        def do_GET(self):
-            path = self.path.split("?")[0]
-            if path == "/api/health":
-                return self._send(200, {"ok": True, "llm_enabled": engine.llm.available})
-            if path == "/api/model":
-                return self._send(200, engine.catalog())
-            if path == "/api/samples":
-                samples = list(engine.model.sample_queries)
-                random.shuffle(samples)
-                return self._send(200, {"samples": samples})
-            if path == "/":
-                path = "/index.html"
-            target = (WEB / path.lstrip("/")).resolve()
-            if WEB in target.parents and target.is_file():
-                ctype = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
-                return self._send(200, target.read_bytes(), ctype)
-            return self._send(404, {"error": "Not found"})
+        async def secured_send(message):
+            if message["type"] == "http.response.start":
+                message["headers"] = list(message.get("headers", [])) + [(k.lower().encode(), v.encode()) for k, v in HEADERS.items()]
+            await send(message)
 
-        def do_POST(self):
+        async def reject(status, message):
+            await error(status, message)(scope, receive, secured_send)
+
+        headers = {k.decode().lower(): v.decode() for k, v in scope["headers"]}
+        host = headers.get("host", "")
+        try:
+            hostname = urlparse("//" + host).hostname
+            origin = urlparse(headers["origin"]) if "origin" in headers else None
+            if hostname not in self.settings.allowed_hosts:
+                return await reject(403, "Host is not allowed.")
+            if origin and (origin.netloc != host or origin.scheme != scope["scheme"]):
+                return await reject(403, "Cross-origin requests are not allowed.")
+            limit = MAX_UPLOAD if scope["path"] == "/api/upload" else MAX_BODY
+            length = int(headers.get("content-length", "0"))
+            if length < 0:
+                return await reject(400, "Invalid content length.")
+            if length > limit:
+                return await reject(413, "Request body exceeds the size limit.")
+        except ValueError:
+            return await reject(400, "Invalid request headers.")
+        if self.slots.locked():
+            return await reject(503, "The demo is busy. Please retry shortly.")
+        async with self.slots:
+            async def read_body():
+                chunks, total = [], 0
+                while True:
+                    message = await receive()
+                    if message["type"] == "http.disconnect":
+                        raise ConnectionError("Client disconnected")
+                    chunk = message.get("body", b"")
+                    total += len(chunk)
+                    if total > limit:
+                        raise OverflowError("Request too large")
+                    chunks.append(chunk)
+                    if not message.get("more_body", False):
+                        return b"".join(chunks)
             try:
-                body = self._json_body()
-            except (ValueError, json.JSONDecodeError) as exc:
-                return self._send(400, {"ok": False, "error": str(exc)})
-            if self.path == "/api/ask":
-                question = str(body.get("question") or "").strip()[:500]
-                if not question:
-                    return self._send(400, {"ok": False, "error": "Ask a question."})
-                return self._send(200, engine.ask(question, body.get("context")))
-            if self.path == "/api/query":
-                return self._send(200, engine.query(body.get("query") or {}))
-            return self._send(404, {"error": "Not found"})
+                body = await asyncio.wait_for(read_body(), timeout=self.settings.request_timeout)
+            except OverflowError:
+                return await reject(413, "Request body exceeds the size limit.")
+            except asyncio.TimeoutError:
+                return await reject(408, "Request body timed out.")
+            except ConnectionError:
+                return
+            if scope["path"] in ("/api/ask", "/api/query"):
+                try:
+                    def invalid_constant(_):
+                        raise ValueError("Non-finite JSON number")
+                    json.loads(body, parse_constant=invalid_constant)
+                except (ValueError, UnicodeError):
+                    return await reject(400, "Invalid JSON body.")
+            sent = False
+            async def replay():
+                nonlocal sent
+                if not sent:
+                    sent = True
+                    return {"type": "http.request", "body": body, "more_body": False}
+                return await receive()
+            await self.app(scope, replay, secured_send)
 
-    return Handler
+
+def use_case(fn):
+    """Run and close source connections on the same worker thread."""
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        request = kwargs["request"]
+        reg = request.app.state.registry
+        try:
+            return fn(*args, **kwargs)
+        except KeyError:
+            return error(404, "Unknown data source or field.")
+        except (ValueError, TypeError, AttributeError, OverflowError):
+            return error(400, "Invalid request. Check the fields, values and synthetic-data confirmation.")
+        except TimeoutError:
+            return error(408, "Query timed out.")
+        except Exception:
+            return error(500, "Unable to read the source. Check its schema and availability.")
+        finally:
+            reg.close_connections()
+    return wrapped
+
+
+def create_app(settings: Optional[Settings] = None, registry: Optional[Registry] = None) -> FastAPI:
+    settings = settings or Settings.from_env()
+    if registry is not None and registry.settings != settings:
+        raise ValueError("The registry and application must use the same settings.")
+
+    @asynccontextmanager
+    async def lifespan(app):
+        app.state.registry = registry if registry is not None else build_registry(settings)
+        app.state.service = BIService(app.state.registry)
+        # Bootstrap may have opened a connection on this event-loop thread.
+        app.state.registry.close_connections()
+        try:
+            yield
+        finally:
+            app.state.registry.shutdown()
+
+    app = FastAPI(title="Conversational BI · synthetic demo", version="0.4.0", lifespan=lifespan,
+                  docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
+    app.state.settings = settings
+    app.add_middleware(RequestBoundary, settings=settings)
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, exc):
+        # Do not echo submitted questions, values or file contents in error details.
+        return error(422, "Invalid request. Check the API contract and field limits.")
+
+    @app.get("/api/health")
+    @use_case
+    def health(request: Request):
+        return {"ok": True, "datasets": len(request.app.state.registry.engines), "data_classification": settings.data_classification}
+
+    @app.get("/api/datasets")
+    @use_case
+    def datasets(request: Request):
+        return {"datasets": request.app.state.registry.listing(), "data_classification": settings.data_classification}
+
+    @app.get("/api/model")
+    @use_case
+    def model(request: Request, dataset: Optional[str] = None):
+        return request.app.state.registry.get(dataset).catalog()
+
+    @app.get("/api/samples")
+    @use_case
+    def samples(request: Request, dataset: Optional[str] = None):
+        values = list(request.app.state.registry.get(dataset).model.sample_queries)
+        random.shuffle(values)
+        return {"samples": values}
+
+    @app.get("/api/freshness")
+    @use_case
+    def freshness(request: Request, dataset: Optional[str] = None):
+        return request.app.state.registry.get(dataset).freshness()
+
+    @app.post("/api/ask")
+    @use_case
+    def ask(request: Request, body: AskRequest):
+        return request.app.state.registry.ask(body.model_dump(exclude_none=True))
+
+    @app.post("/api/query")
+    @use_case
+    def query(request: Request, body: QueryRequest):
+        return request.app.state.service.query(body.model_dump(exclude_none=True))
+
+    @app.post("/api/upload")
+    async def upload(request: Request, x_filename: str = Header(default=""), x_data_classification: str = Header(default="")):
+        from starlette.concurrency import run_in_threadpool
+        payload = await request.body()
+        def import_file():
+            try:
+                return request.app.state.service.upload(payload, x_filename, x_data_classification)
+            except ValueError as exc:
+                return error(400, str(exc))
+            except Exception:
+                return error(500, "Unable to import the synthetic file.")
+            finally:
+                request.app.state.registry.close_connections()
+        return await run_in_threadpool(import_file)
+
+    app.mount("/", StaticFiles(directory=ROOT / "web", html=True), name="web")
+    return app
 
 
 def main():
-    db_path = Path(os.environ.get("BI_DB", ROOT / "data" / "demo.db"))
-    model_path = Path(os.environ.get("BI_MODEL_FILE", ROOT / "semantic" / "retail_sales.json"))
-    data.ensure(db_path)
-    engine = Engine(model_path, db_path, log_path=db_path.parent / "query_log.jsonl")
-    host, port = os.environ.get("BI_HOST", "127.0.0.1"), int(os.environ.get("PORT", "8765"))
-    print(f"Conversational BI on http://{host}:{port}  (Claude interpreter: "
-          f"{'on' if engine.llm.available else 'off - using built-in rules'})", flush=True)
-    ThreadingHTTPServer((host, port), make_handler(engine)).serve_forever()
+    import uvicorn
+    settings = Settings.from_env()
+    print(f"Synthetic-data demo on http://{settings.host}:{settings.port}", flush=True)
+    uvicorn.run(create_app(settings), host=settings.host, port=settings.port, workers=1,
+                timeout_keep_alive=10, access_log=False)
 
 
 if __name__ == "__main__":

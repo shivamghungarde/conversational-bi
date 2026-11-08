@@ -1,5 +1,7 @@
 # Best practices for building this as a standalone product
 
+Current release scope: **local synthetic-data demo**. The implemented design is recorded in [ARCHITECTURE.md](ARCHITECTURE.md). The production controls below are a roadmap, not a requirement to add enterprise infrastructure to this demo.
+
 ## 1. Repository and project hygiene
 
 - **Its own repository (done).** This project was split out of the personal-site repo with its history
@@ -16,35 +18,44 @@
   synonyms. The NL layer never invents logic.
 - **Mark metrics additive or not.** Shares of total and summed totals only make sense for additive metrics
   (revenue yes, margin % no). The narrator already respects this flag.
-- **Add synonyms from real usage.** Review `data/query_log.jsonl` each week. Each low-confidence question means a
-  synonym, metric or dimension is missing.
+- **Add synonyms from real usage.** Review privacy-safe metrics in `data/synthetic/query_log.jsonl`. Question text is off by default; collect curated mock questions separately with expected interpretations.
 - **When you outgrow JSON, adopt a standard.** dbt Semantic Layer (MetricFlow), Cube or LookML each give you
   metrics, joins, caching and access control. Keep `SemanticQuery` as the internal contract and write an adapter
   so the NL and UI layers don't change.
 
-## 3. Natural language: safe, fast, honest
+## 3. Natural language: on-prem, fast, honest
 
-- **Never let an LLM write raw SQL against the warehouse.** Have it fill a structured query constrained by
-  JSON-schema enums (see `bi/llm.py`), then validate and compile it yourself. This prevents injection, hallucinated
-  columns and ungoverned definitions.
-- **Use tiered interpretation for speed:** deterministic rules first (milliseconds, free), LLM only on low
-  confidence. Most BI questions are repetitive, so this keeps the median answer instant.
-- **Always show the interpretation** as editable chips and keep the SQL one click away. Leaders trust what they can
-  check.
-- **Template numbers, don't generate them.** If you later want richer LLM-written narratives, pass the computed
-  result in and have the model only rephrase. Then check that every number in its output appears in the result.
-- **Ask, don't guess, when a question is ambiguous** (for example "best customers" by revenue or by orders). That is
-  the next feature to add: a clarifying-question response type.
+- **Keep questions on the network.** The rules engine needs no model at all. If you add one, self-host it
+  (Ollama or vLLM on an internal GPU box) and keep the private-network guard in `bi/llm.py`. Log only locally.
+- **Never let a model write raw SQL against the warehouse.** Have it fill a structured query constrained by
+  JSON-schema enums, then validate and compile it yourself.
+- **Use tiered interpretation for speed:** rules first (under a millisecond), the local model only when
+  confidence is low.
+- **Ask, don't guess.** Clarify vague measures, values that match several things, vague periods, and "why"
+  questions with no period. Grow the `ambiguous_terms` list in the model from the question log.
+- **Always show the interpretation** as chips, keep the SQL one click away, and stamp every answer with its
+  "as of" time.
+- **Template numbers, don't generate them.** If a local model later writes richer narratives, give it the computed
+  result and check that every number it outputs appears in that result.
 
-## 4. Data access and performance
+## 3a. "Why" questions
 
-- **Use a read-only service account** with a statement timeout and row limits (the compiler already caps `LIMIT`).
-- **Cache by compiled SQL plus parameters**, invalidated when data refreshes. Repeat questions should return in
-  under 50 ms.
-- **Pre-aggregate hot paths** (daily metrics by the main dimensions) once the fact table gets large. DuckDB or
-  warehouse materialized views both work.
-- **Add row-level security in the compiler,** for example by injecting `region IN (user's regions)` from the
-  user's identity, rather than trusting the UI.
+- Agree the **decomposition** with Finance and Delivery up front. Rate versus mix for utilization is standard, but
+  leaders must recognise it. Show "Rate effect" and "Mix effect" in the table and tooltips, as the POC does.
+- Choose `explain_by` dimensions per metric so explanations identify useful contributors rather than restating the metric. Decomposition alone does not establish causation.
+- Watch out for **partial periods**: compare month-to-date with the same days of last month, never with a full month.
+  The POC does this automatically.
+
+## 4. Data access and real-time freshness
+
+- **Query the system of record live**, through a read-only account with a statement timeout and the compiler's row
+  caps. For real-time numbers, don't add a result cache. If load grows, cache for a few seconds at most, keyed on
+  the data's last-change time.
+- **Show freshness everywhere:** when the data last changed (`freshness_sql` in the model, e.g. the latest timesheet
+  submission) and when each answer was computed.
+- **Files:** set `BI_SOURCE_CLASSIFICATION=synthetic` and point `BI_SOURCE` at a mock file that an export job overwrites. The app reloads it when it changes.
+- **Later:** pre-aggregate hot paths (daily utilization by practice and region) with incremental refresh once the fact
+  table is large. Add row-level security in the compiler from the user's identity.
 
 ## 5. Quality: evals before features
 
@@ -56,7 +67,7 @@
 
 ## 6. Security and operations
 
-- Put secrets (API keys, warehouse credentials) in a secret manager or environment variables. Never commit them.
+- Put secrets (warehouse credentials) in a secret manager or environment variables. Never commit them.
   `.env` files are git-ignored.
 - Add SSO (OIDC) before anyone outside your team uses it. Log who asked what.
 - Containerise (one `Dockerfile`, health check at `/api/health`) and deploy behind a reverse proxy with TLS.
@@ -66,8 +77,8 @@
 
 | Phase | Scope |
 |---|---|
-| **0 (this MVP)** | One semantic model, rules + optional Claude, breakdowns, trends, comparisons, drill-down, CSV |
-| **1. Real data** | Warehouse connector (Postgres/Snowflake/BigQuery), dbt/Cube adapter, caching, auth |
-| **2. Trust** | Clarifying questions, feedback buttons, golden-set CI, metric glossary pages |
+| **0 (this POC)** | Synthetic data only, FastAPI/Pydantic modular monolith, existing UI, governed SQL, mock live feed and optional on-prem model |
+| **1. Real data** | Connect the real timesheet/finance database, agree metric definitions, SSO and row-level security |
+| **2. Trust** | Feedback buttons, golden-set CI, metric glossary pages, a self-hosted LLM for unusual phrasings |
 | **3. Reach** | Slack/Teams bot over the same `/api/ask`, scheduled digests, saved/pinned questions |
 | **4. Insight** | "Why did revenue drop?" driver analysis, anomaly alerts, forecasts |
